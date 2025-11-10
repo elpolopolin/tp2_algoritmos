@@ -1,22 +1,19 @@
-interface Handle<T> {
+package aed;
 
-    private int indice;
-    private T elemento;
-
-    Handle(T elemento, int indice) {
-        this.elemento = elemento;
-        this.indice = indice;
-    }
-
-    public T obtenerElemento() {
-        return this.elemento;
-    }
-
-    int obtenerIndice() {
-        return this.indice;
-    }
-
-    void actualizarIndice(int nuevoIndice) {
-        this.indice = nuevoIndice;
-    }
+/**
+ * Interface Handle para referencias a elementos en el Heap.
+ * Permite acceso O(1) y eliminación O(log n) de elementos.
+ */
+public interface Handle<T> {
+    /**
+     * Obtiene el valor del elemento referenciado por este handle.
+     * @return el valor del elemento
+     */
+    public T valor();
+    
+    /**
+     * Elimina el elemento del heap.
+     * Complejidad: O(log n)
+     */
+    public void eliminar();
 }

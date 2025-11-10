@@ -226,7 +226,7 @@ class EdrTests {
     }
 
     @Test
-    void todos_copiones() {    //cambiar este test
+    void todos_copiones() {
         double[] notas;
         double[] notas_esperadas;
 

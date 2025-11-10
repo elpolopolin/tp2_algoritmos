@@ -1,9 +1,5 @@
+package aed;
 import java.util.ArrayList;
-
-interface Handle<T> {    
-    public T valor();
-    public void eliminar();
-}
 
 public class Heap<T extends Comparable<T>> {
     

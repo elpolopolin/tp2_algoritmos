@@ -41,7 +41,7 @@ public class Edr {
     private int entregasRestantes;
     
     // Constructor: O(E * R)
-    public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
+    public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {        
         this.LadoAula = LadoAula; // O(1)
         this.ExamenCanonico = ExamenCanonico; // O(1) - referencia
         this.entregasRestantes = Cant_estudiantes; // O(1)
@@ -58,7 +58,7 @@ public class Edr {
             
             // Inicializar respuestas en 0: O(R)
             for (int j = 0; j < R; j++) { // O(R) iteraciones
-                est.respuestas[j] = 0; // O(1)
+                est.respuestas[j] = -1; // O(1)
             }
             
             // Insertar en heap y guardar handle: O(log E)
@@ -90,7 +90,7 @@ public class Edr {
     private double calcularPuntaje(int[] respuestas, int[] examenCanonico) {
         double puntaje = 0.0; // O(1)
         for (int i = 0; i < respuestas.length && i < examenCanonico.length; i++) { // O(R) iteraciones
-            if (respuestas[i] != 0 && respuestas[i] == examenCanonico[i]) { // O(1) - comparación
+            if (respuestas[i] != -1 && respuestas[i] == examenCanonico[i]) { // O(1) - comparación
                 puntaje += 10.0; // O(1)
             }
         }
@@ -99,19 +99,19 @@ public class Edr {
     
     // calcularCambioPuntaje(): O(1)
     private double calcularCambioPuntaje(int[] respuestas, int[] examenCanonico, 
-                                         int nroEjercicio, int respuestaPrevia) {
+                        int nroEjercicio, int respuestaPrevia) {
         // Calcular cambio incremental: O(1)
         double cambio = 0.0; // O(1)
         
         // Si la respuesta previa era correcta, se pierde 10 puntos: O(1)
-        if (respuestaPrevia != 0 && nroEjercicio < examenCanonico.length && 
+        if (respuestaPrevia != -1 && nroEjercicio < examenCanonico.length && 
             respuestaPrevia == examenCanonico[nroEjercicio]) { // O(1) - comparaciones y acceso a array
             cambio -= 10.0; // O(1)
         }
         
         // Si la nueva respuesta es correcta, se gana 10 puntos: O(1)
         int nuevaRespuesta = respuestas[nroEjercicio]; // O(1) - acceso a array
-        if (nuevaRespuesta != 0 && nroEjercicio < examenCanonico.length && 
+        if (nuevaRespuesta != -1 && nroEjercicio < examenCanonico.length && 
             nuevaRespuesta == examenCanonico[nroEjercicio]) { // O(1) - comparaciones
             cambio += 10.0; // O(1)
         }
@@ -123,7 +123,7 @@ public class Edr {
     private int calcularCompletadas(int[] respuestas) {
         int completadas = 0; // O(1)
         for (int i = 0; i < respuestas.length; i++) { // O(R) iteraciones
-            if (respuestas[i] != 0) { // O(1) - comparación
+            if (respuestas[i] !=-1) { // O(1) - comparación
                 completadas++; // O(1)
             }
         }
@@ -156,7 +156,7 @@ public class Edr {
         
         // Encontrar la primera respuesta a copiar: O(R) en el peor caso
         for (int j = 0; j < R; j++) { // O(R) iteraciones en el peor caso
-            if (vecino.respuestas[j] != 0 && est.respuestas[j] == 0) { // O(1) - comparaciones y acceso a array
+            if (vecino.respuestas[j] != -1 && est.respuestas[j] == -1) { // O(1) - comparaciones y acceso a array
                 nroEj = j; // O(1)
                 break; // O(1) - puede terminar antes
             }
@@ -191,7 +191,7 @@ public class Edr {
         int respuesta_previa = est.respuestas[NroEjercicio]; // O(1) - acceso a array
         
         // Actualizar respuesta y contadores: O(1)
-        if (respuesta_previa == 0) { // O(1)
+        if (respuesta_previa == -1) { // O(1)
             est.respuestasCompletadas++; // O(1)
         }
         est.respuestas[NroEjercicio] = res; // O(1) - asignación

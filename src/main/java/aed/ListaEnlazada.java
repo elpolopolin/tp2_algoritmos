@@ -1,3 +1,4 @@
+package aed;
 public class ListaEnlazada<T> {
     private Nodo primero;
     private Nodo ultimo;
