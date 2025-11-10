@@ -1,0 +1,270 @@
+// DEFINICIONES AUXILIARES
+
+// Handle es la referencia interna usada por el Heap para modificar la ubicación en O(log E)
+Handle ES tipo abstracto
+
+Estudiante ES struct <
+    id: Z,                     // ID del estudiante (0..E-1)
+    respuestas: Array<Z>,      // R respuestas
+    puntaje: Z,                // Puntaje actual
+    entregado: Bool,
+    sospechoso: Bool,
+    respuestasCompletadas: Z,
+    vecino_id: Z,              // ID del vecino para copiarse
+    heap_handle: Handle        // Referencia a su posición en el Heap (para O(1) acceso)
+>
+
+NotaFinal ES struct <
+    nota: Z,                   // Puntaje final
+    id: Z                      // ID del estudiante
+>
+
+// MÓDULO PRINCIPAL
+Modulo EdRImpl implementa EdR {
+    var estudiantes: Array<Estudiante>                         // O(1) acceso por ID. Tamaño E.
+    var puntajesDeEstudiantes: Heap<Estudiante>                // Min-Heap de Estudiantes, ordenado por puntaje ascendente, luego ID.
+    private var LadoAula: Z
+    private var ExamenCanonico: Array<Z>                       // Array de Respuestas Canónicas. Tamaño R.
+    private var entregasRestantes: Z
+}
+Pseudocódigo de Operaciones con Análisis de Complejidad
+1. nuevoEdR
+Cota Requerida: O(E⋅R)
+proc nuevoEdR(in ladoAula: Z, in cantidadEstudiantes: Z, in examenCanonico: seq<Z>): EdRImpl
+    var edr: EdRImpl := new EdRImpl()                                     // O(1)
+    edr.LadoAula := ladoAula                                              // O(1)
+    edr.ExamenCanonico := ArrayDesdeSecuencia(examenCanonico)             // O(R)
+    var R: Z := length(edr.ExamenCanonico)                                // O(1)
+    var E: Z := cantidadEstudiantes                                       // O(1)
+    
+    edr.estudiantes := NewArray<Estudiante>[E]                            // O(E)
+    edr.puntajesDeEstudiantes := HeapVacio<Estudiante>()                  // O(1)
+    edr.entregasRestantes := E                                            // O(1)
+
+    for i := 0 to E - 1 do                                                // Bucle E veces: O(E)
+        var est: Estudiante := new Estudiante()                           // O(1)
+        est.id := i                                                       // O(1)
+        est.respuestas := NewArray<Z>[R]                                   // O(R)
+        for j := 0 to R - 1 do                                            // Bucle R veces: O(R)
+            est.respuestas[j] := 0                                        // O(1)
+        endfor
+        est.puntaje := 0                                                  // O(1)
+        est.entregado := Falso                                            // O(1)
+        est.sospechoso := Falso                                           // O(1)
+        est.respuestasCompletadas := 0                                    // O(1)
+        est.vecino_id := calcularVecinoID(i, ladoAula)                    // O(1)
+        
+        // La operación encolar devuelve el Handle (la referencia interna)
+        var handle: Handle := edr.puntajesDeEstudiantes.encolar(est)       // O(log E)
+        est.heap_handle := handle                                         // O(1)
+        
+        edr.estudiantes[i] := est                                         // O(1)
+    endfor
+    
+    return edr                                                            // O(1)
+endproc
+// COMPLEJIDAD TOTAL: O(R + E * (R + log E)) = O(E * R). Cota cumplida.
+2. copiarse
+Cota Requerida: O(R+log(E))
+proc copiarse(inout edr: EdRImpl, in estudianteID: Z)
+    var est: Estudiante := edr.estudiantes[estudianteID]                   // O(1)
+    var vecino: Estudiante := edr.estudiantes[est.vecino_id]               // O(1)
+    var R: Z := length(edr.ExamenCanonico)                                // O(1)
+    var old_puntaje: Z := est.puntaje                                     // O(1)
+
+    var nroEj: Z := -1                                                    // O(1)
+    
+    // 1. Encontrar la primera respuesta a copiar (O(R))
+    for j := 0 to R - 1 do                                                // Bucle O(R)
+        if vecino.respuestas[j] != 0 AND est.respuestas[j] == 0 then       // O(1)
+            nroEj := j                                                    // O(1)
+            break                                                         // O(1)
+        endif
+    endfor
+    
+    if nroEj != -1 then                                                   // O(1)
+        // 2. Copiar y actualizar contadores (O(1))
+        var nueva_respuesta: Z := vecino.respuestas[nroEj]                // O(1)
+        est.respuestas[nroEj] := nueva_respuesta                          // O(1)
+        est.respuestasCompletadas := est.respuestasCompletadas + 1        // O(1)
+        
+        // 3. Recalcular puntaje (O(R) si es escaneo completo)
+        var nuevo_puntaje: Z := calcularPuntaje(est.respuestas, edr.ExamenCanonico) // O(R)
+        est.puntaje := nuevo_puntaje                                      // O(1)
+        
+        // 4. Actualizar el Heap (O(log E))
+        if nuevo_puntaje != old_puntaje then                              // O(1)
+            // Usando el Handle para modificar y reordenar el Heap [1, 2, 6, 7]
+            edr.puntajesDeEstudiantes.modificarPrioridad(est.heap_handle, est) // O(log E)
+        endif
+        est.sospechoso := Verdadero                                       // O(1)
+    endif
+endproc
+// COMPLEJIDAD TOTAL: O(R + R + log E) = O(R + log E). Cota cumplida.
+3. resolver
+Cota Requerida: O(log(E))
+proc resolver(inout edr: EdRImpl, in estudianteID: Z, in nroEjercicio: Z, in respuestaEjercicio: Z)
+    var est: Estudiante := edr.estudiantes[estudianteID]                   // O(1)
+    var old_puntaje: Z := est.puntaje                                     // O(1)
+    
+    // 1. Actualizar respuesta y contadores (O(1))
+    var respuesta_previa: Z := est.respuestas[nroEjercicio]                // O(1)
+    
+    if respuesta_previa == 0 then                                         // O(1)
+        est.respuestasCompletadas := est.respuestasCompletadas + 1        // O(1)
+    endif                                                                 
+    est.respuestas[nroEjercicio] := respuestaEjercicio                    // O(1)
+    
+    // 2. Recalcular puntaje (ASUMIMOS O(1) INCREMENTAL para cumplir la cota)
+    var puntaje_ganado: Z := calcularCambioPuntaje(est.respuestas, edr.ExamenCanonico, nroEjercicio, respuesta_previa) // O(1)
+    var nuevo_puntaje: Z := old_puntaje + puntaje_ganado                  // O(1)
+    
+    // 3. Actualizar el Heap (O(log E))
+    if nuevo_puntaje != old_puntaje then                                 // O(1)
+        est.puntaje := nuevo_puntaje                                      // O(1)
+        // Uso del Handle para O(log E) [1, 2]
+        edr.puntajesDeEstudiantes.modificarPrioridad(est.heap_handle, est) // O(log E) 
+    endif
+endproc
+// COMPLEJIDAD TOTAL: O(1 + log E) = O(log E). Cota cumplida.
+4. consultarDarkWeb
+Cota Requerida: O(k⋅(R+log(E)))
+proc consultarDarkWeb(inout edr: EdRImpl, in k: Z, in examenDW: seq<Z>)
+    var peor_estudiantes: ListaEnlazada<Estudiante> := ListaVacia()       // O(1)
+    var examenDW_array: Array<Z> := ArrayDesdeSecuencia(examenDW)         // O(R)
+    var R: Z := length(examenDW_array)                                   // O(1)
+
+    // 1. Sacar los k peores del Min-Heap (k * O(log E))
+    for i := 0 to k - 1 do                                               // Bucle O(k)
+        // Desencolar Min: devuelve el estudiante con peor puntaje (Min-Heap) [6, 8]
+        var est: Estudiante := edr.puntajesDeEstudiantes.desencolarMax() // O(log E)
+        peor_estudiantes.agregarAtras(est)                               // O(1)
+    endfor
+
+    // 2. Reemplazar examen, recalcular score, y reencolar (k * O(R + log E))
+    var current: Estudiante := peor_estudiantes.primero()                 // O(1)
+    while current != null do                                             // Bucle O(k)
+        var est: Estudiante := current                                   // O(1)
+        
+        // Reemplazar examen (O(R))
+        est.respuestas := copiarArray(examenDW_array)                    // O(R)
+        
+        // Recalcular contadores (O(R) - se asume cálculo lineal)
+        est.respuestasCompletadas := calcularCompletadas(est.respuestas) // O(R) 
+
+        // Calcular nuevo puntaje (O(R))
+        var nuevo_puntaje: Z := calcularPuntaje(est.respuestas, edr.ExamenCanonico) // O(R)
+        est.puntaje := nuevo_puntaje                                     // O(1)
+
+        // Reencolar en el Heap, lo que genera un nuevo Handle o actualiza el existente (O(log E))
+        est.heap_handle := edr.puntajesDeEstudiantes.encolar(est)          // O(log E)
+        
+        current := current.siguiente_en_lista                            // O(1)
+    endwhile
+    
+endproc
+// COMPLEJIDAD TOTAL: O(R + k * log E + k * (R + log E)) = O(k * (R + log E)). Cota cumplida.
+5. notas
+Cota Requerida: O(E)
+proc notas(in edr: EdRImpl): seq < Z >
+    var E: Z := length(edr.estudiantes)                                   // O(1)
+    var res: Array<Z> := NewArray<Z>[E]                                   // O(E)
+    
+    for i := 0 to E - 1 do                                                // Bucle O(E)
+        var est: Estudiante := edr.estudiantes[i]                         // O(1)
+        res[i] := est.puntaje                                             // O(1)
+    endfor
+    
+    return SecuenciaDesdeArray(res)                                       // O(E)
+endproc
+// COMPLEJIDAD TOTAL: O(E). Cota cumplida.
+6. entregar
+Cota Requerida: O(log(E))
+proc entregar(inout edr: EdRImpl, in estudianteID: Z)
+    var est: Estudiante := edr.estudiantes[estudianteID]                   // O(1)
+    
+    if !est.entregado then                                                // O(1)
+        est.entregado := Verdadero                                        // O(1)
+        // La operación es O(1) atómica. Como O(1) <= O(log E), la cota es cumplida.
+    endif
+endproc
+// COMPLEJIDAD TOTAL: O(1). Cota cumplida.
+7. chequearCopias
+Cota Requerida: O(E⋅R)
+proc chequearCopias(inout edr: EdRImpl): seq < Z >
+    var E: Z := length(edr.estudiantes)                                   // O(1)
+    var R: Z := length(edr.ExamenCanonico)                                // O(1)
+    
+    // Asumimos un rango M (max respuesta posible) acotado a O(1)
+    var contadorRespuestas: Array<Array<Z>> := inicializarContadores(R, M) // O(R * M) = O(R)
+    var umbral: Z := floor(E * 0.25)                                       // O(1)
+
+    // 1. Contar la frecuencia de respuestas por ejercicio (O(E*R))
+    for i := 0 to E - 1 do                                                // Bucle O(E)
+        var est: Estudiante := edr.estudiantes[i]                         // O(1)
+        for j := 0 to R - 1 do                                            // Bucle O(R)
+            var resp: Z := est.respuestas[j]                              // O(1)
+            if resp != 0 then                                             // O(1)
+                contadorRespuestas[j][resp] := contadorRespuestas[j][resp] + 1 // O(1)
+            endif
+        endfor
+    endfor
+
+    // 2. Marcar sospechosos (O(E*R))
+    var ids_sospechosos_lista: ListaEnlazada<Z> := ListaVacia()            // O(1)
+
+    for i := 0 to E - 1 do                                                // Bucle O(E)
+        var est: Estudiante := edr.estudiantes[i]                         // O(1)
+        est.sospechoso := Falso                                           // O(1)
+
+        for j := 0 to R - 1 do                                            // Bucle O(R)
+            var resp: Z := est.respuestas[j]                              // O(1)
+            
+            if resp != 0 then                                             // O(1)
+                var freq_total: Z := contadorRespuestas[j][resp]          // O(1)
+                // Se resta 1 para excluir al estudiante actual [9]
+                var freq_excluyendo_propio: Z := IfThenElseFi(freq_total > 0, freq_total - 1, 0) // O(1)
+                
+                if freq_excluyendo_propio >= umbral then                  // O(1)
+                    est.sospechoso := Verdadero                           // O(1)
+                    break // Romper el bucle R, pues ya es sospechoso [9] // O(1)
+                endif
+            endif
+        endfor
+        
+        if est.sospechoso then                                            // O(1)
+            ids_sospechosos_lista.agregarAtras(est.id)                   // O(1)
+        endif
+    endfor
+
+    // 3. Convertir lista a secuencia (O(E))
+    return SecuenciaDesdeLista(ids_sospechosos_lista)                     // O(E)
+endproc
+// COMPLEJIDAD TOTAL: O(R + E * R + E * R + E) = O(E * R). Cota cumplida.
+8. corregir
+Cota Requerida: O(E⋅log(E))
+proc corregir(in edr: EdRImpl): seq < NotaFinal >
+    var E: Z := length(edr.estudiantes)                                   // O(1)
+    var notas_validas: ListaEnlazada<NotaFinal> := ListaVacia()           // O(1)
+
+    // 1. Filtrar estudiantes no sospechosos que entregaron (O(E))
+    for i := 0 to E - 1 do                                                // Bucle O(E)
+        var est: Estudiante := edr.estudiantes[i]                         // O(1)
+
+        if !est.sospechoso AND est.entregado then                         // O(1)
+            var nota_final_struct: NotaFinal := new NotaFinal(est.puntaje, est.id) // O(1)
+            notas_validas.agregarAtras(nota_final_struct)                 // O(1)
+        endif
+    endfor
+    
+    var notas_array: Array<NotaFinal> := listToArray(notas_validas)       // O(E)
+    var M: Z := length(notas_array)                                       // O(1)
+    
+    // 2. Ordenar el array de notas_validas (O(E log E))
+    // Criterio: Nota DESCENDENTE, luego ID MAYOR (DESCENDENTE) [10].
+    // MergeSort es O(n log n) en peor caso y es estable [11, 12].
+    mergeSort(notas_array, CriterioNotaDescIDDesc)                       // O(M log M) => O(E log E)
+    
+    return SecuenciaDesdeArray(notas_array)                              // O(E)
+endproc
+// COMPLEJIDAD TOTAL: O(E + E log E) = O(E log E). Cota cumplida.
