@@ -29,11 +29,16 @@ public class Edr {
             if (this.puntaje != otro.puntaje) {
                 return Double.compare(this.puntaje, otro.puntaje);
             }
-            return Integer.compare(this.id, otro.id);
+            // Desempate por ID ascendente
+            if (this.id < otro.id) {
+                return -1;
+            } else if (this.id > otro.id) {
+                return 1;
+            }
+            return 0;
         }
     }
     
-    // Estructuras de datos
     private Estudiante[] estudiantes;  // O(1) acceso por ID
     private Heap<Estudiante> puntajesDeEstudiantes;  // Min-heap
     private int LadoAula;
@@ -89,34 +94,36 @@ public class Edr {
     // calcularPuntaje(): O(R)
     private double calcularPuntaje(int[] respuestas, int[] examenCanonico) {
         double puntaje = 0.0; // O(1)
+        int correctas = 0;
         for (int i = 0; i < respuestas.length && i < examenCanonico.length; i++) { // O(R) iteraciones
             if (respuestas[i] != -1 && respuestas[i] == examenCanonico[i]) { // O(1) - comparación
-                puntaje += 10.0; // O(1)
+                correctas++; // O(1)
             }
         }
-        return puntaje; // O(1)
+        puntaje = (int) (((double) correctas / examenCanonico.length) * 100.0);
+        return puntaje;
     }
     
     // calcularCambioPuntaje(): O(1)
     private double calcularCambioPuntaje(int[] respuestas, int[] examenCanonico, 
                         int nroEjercicio, int respuestaPrevia) {
         // Calcular cambio incremental: O(1)
-        double cambio = 0.0; // O(1)
-        
-        // Si la respuesta previa era correcta, se pierde 10 puntos: O(1)
-        if (respuestaPrevia != -1 && nroEjercicio < examenCanonico.length && 
-            respuestaPrevia == examenCanonico[nroEjercicio]) { // O(1) - comparaciones y acceso a array
-            cambio -= 10.0; // O(1)
+        double cambio = 0.0;
+        int R = examenCanonico.length;
+        double puntosPorRespuesta = 100.0 / R;
+
+        boolean eraCorrecta = (respuestaPrevia != -1 && respuestaPrevia == examenCanonico[nroEjercicio]);
+        boolean esCorrecta = (respuestas[nroEjercicio] != -1 && respuestas[nroEjercicio] == examenCanonico[nroEjercicio]);
+
+        if (eraCorrecta && !esCorrecta) {
+            // Se tenía una respuesta correcta y ahora es incorrecta
+            cambio = -puntosPorRespuesta;
+        } else if (!eraCorrecta && esCorrecta) {
+            // Se tenía una respuesta incorrecta/en blanco y ahora es correcta
+            cambio = puntosPorRespuesta;
         }
-        
-        // Si la nueva respuesta es correcta, se gana 10 puntos: O(1)
-        int nuevaRespuesta = respuestas[nroEjercicio]; // O(1) - acceso a array
-        if (nuevaRespuesta != -1 && nroEjercicio < examenCanonico.length && 
-            nuevaRespuesta == examenCanonico[nroEjercicio]) { // O(1) - comparaciones
-            cambio += 10.0; // O(1)
-        }
-        
-        return cambio; // O(1)
+        // Si era incorrecta y sigue incorrecta, o era correcta y sigue correcta, el cambio es 0.
+        return cambio;
     }
     
     // calcularCompletadas(): O(R)
@@ -134,7 +141,11 @@ public class Edr {
     public double[] notas() {
         double[] res = new double[estudiantes.length]; // O(E) - crear array de tamaño E
         for (int i = 0; i < estudiantes.length; i++) { // O(E) iteraciones
-            res[i] = estudiantes[i].puntaje; // O(1) - acceso a array y lectura de campo
+            int correctas = 0;
+            for(int j = 0; j < ExamenCanonico.length; j++){
+                if(estudiantes[i].respuestas[j] != -1 && estudiantes[i].respuestas[j] == ExamenCanonico[j]) correctas++;
+            }
+            res[i] = Math.round(((double) correctas / ExamenCanonico.length) * 100.0);
         }
         return res; // O(1)
     }
@@ -187,22 +198,21 @@ public class Edr {
     public void resolver(int estudiante, int NroEjercicio, int res) {
         Estudiante est = estudiantes[estudiante]; // O(1) - acceso a array por índice
         double old_puntaje = est.puntaje; // O(1)
-        
         int respuesta_previa = est.respuestas[NroEjercicio]; // O(1) - acceso a array
         
         // Actualizar respuesta y contadores: O(1)
         if (respuesta_previa == -1) { // O(1)
             est.respuestasCompletadas++; // O(1)
         }
+
         est.respuestas[NroEjercicio] = res; // O(1) - asignación
-        
+
         // Calcular cambio de puntaje incremental: O(1)
-        double cambio = calcularCambioPuntaje(est.respuestas, ExamenCanonico, 
-                                              NroEjercicio, respuesta_previa); // O(1)
-        double nuevo_puntaje = old_puntaje + cambio; // O(1)
+        double cambio = calcularCambioPuntaje(est.respuestas, ExamenCanonico, NroEjercicio, respuesta_previa);
+        // Recalculamos para evitar errores de punto flotante acumulados
+        double nuevo_puntaje = calcularPuntaje(est.respuestas, ExamenCanonico);
         
         // Actualizar heap si cambió el puntaje: O(log E)
-        // Como el objeto est es la misma referencia en el heap, solo necesitamos reordenar
         if (nuevo_puntaje != old_puntaje) { // O(1)
             est.puntaje = nuevo_puntaje; // O(1)
             if (est.heap_handle != null) { // O(1)
@@ -278,12 +288,16 @@ public class Edr {
         // haciendo que el costo sea efectivamente O(k*R), que está dentro de O(k(R + log E)).
     }
     
-    // entregar(): O(1)
+    // entregar(): O(log E)
     public void entregar(int estudiante) {
         Estudiante est = estudiantes[estudiante]; // O(1) - acceso a array por índice
         if (!est.entregado) { // O(1)
             est.entregado = true; // O(1)
             entregasRestantes--; // O(1)
+            if (est.heap_handle != null) {
+                puntajesDeEstudiantes.borrar(est.heap_handle); // O(log E)
+                est.heap_handle = null;
+            }
         }
     }
     
@@ -313,14 +327,14 @@ public class Edr {
         }
         // Costo: O(R * M), pero si M es constante o pequeño, es O(R)
         
-        int umbral = (int) Math.floor(E * 0.25); // O(1)
+        double umbral = Math.ceil((E - 1) * 0.25); // O(1)
         
         // Contar frecuencia de respuestas por ejercicio: O(E * R)
         for (int i = 0; i < E; i++) { // O(E) iteraciones
             Estudiante est = estudiantes[i]; // O(1) - acceso a array
             for (int j = 0; j < R; j++) { // O(R) iteraciones
                 int resp = est.respuestas[j]; // O(1) - acceso a array
-                if (resp != 0 && resp <= M) { // O(1) - comparaciones
+                if (resp != -1 && resp != ExamenCanonico[j] && resp <= M) { // O(1) - comparaciones
                     contadorRespuestas[j][resp]++; // O(1) - incremento
                 }
             }
@@ -337,7 +351,7 @@ public class Edr {
             for (int j = 0; j < R; j++) { // O(R) iteraciones
                 int resp = est.respuestas[j]; // O(1) - acceso a array
                 
-                if (resp != 0 && resp <= M) { // O(1) - comparaciones
+                if (resp != -1 && resp <= M) { // O(1) - comparaciones
                     int freq_total = contadorRespuestas[j][resp]; // O(1) - acceso a array 2D
                     // Se resta 1 para excluir al estudiante actual
                     int freq_excluyendo_propio = freq_total > 0 ? freq_total - 1 : 0; // O(1)
@@ -355,18 +369,17 @@ public class Edr {
         }
         // Costo: O(E * R) en el peor caso, pero puede ser mejor si hay muchos breaks
         
-        // Convertir lista a array: O(E) en el peor caso
-        int[] resultado = new int[ids_sospechosos_lista.longitud()]; // O(1) - pero longitud() es O(E)
+        // Convertir lista a array: O(S) donde S es el número de sospechosos (S <= E).
+        // La llamada a longitud() es O(S) y el bucle con iterador es O(S).
+        int[] resultado = new int[ids_sospechosos_lista.longitud()];
         ListaEnlazada.ListaIterador iter = ids_sospechosos_lista.iterador(); // O(1)
         int idx = 0; // O(1)
-        while (iter.haySiguiente()) { // O(E) iteraciones en el peor caso
-            resultado[idx++] = (Integer) iter.siguiente(); // O(1) - cast necesario, pero obtener() es O(idx)
+        while (iter.haySiguiente()) { // O(S) iteraciones
+            resultado[idx++] = (Integer) iter.siguiente(); // O(1) con iterador
         }
-        // Costo: O(E^2) en el peor caso debido a obtener() en lista enlazada
-        // Nota: Esto podría optimizarse, pero la complejidad dominante es O(E * R)
         
         return resultado; // O(1)
-        // Costo total: O(E * R) + O(E * R) + O(E^2) = O(E * R) cuando R >= E
+        // Costo total: O(E * R) + O(E) = O(E * R). La cota se cumple incondicionalmente.
     }
     
     // corregir(): O(E log E)
@@ -383,17 +396,15 @@ public class Edr {
         }
         // Costo: O(E)
         
-        // Convertir lista a array: O(E^2) en el peor caso debido a obtener() en lista enlazada
-        int M = notas_validas.longitud(); // O(E) - longitud() recorre la lista
+        // Convertir lista a array: O(M) donde M es el número de notas válidas (M <= E).
+        // La llamada a longitud() es O(M) y el bucle con iterador es O(M).
+        int M = notas_validas.longitud();
         NotaFinal[] notas_array = new NotaFinal[M]; // O(E) - crear array de tamaño M <= E
         ListaEnlazada.ListaIterador iter = notas_validas.iterador(); // O(1)
         int idx = 0; // O(1)
-        while (iter.haySiguiente()) { // O(E) iteraciones
-            notas_array[idx++] = (NotaFinal) iter.siguiente(); // O(idx) - obtener() en lista enlazada es O(idx)
+        while (iter.haySiguiente()) { // O(M) iteraciones
+            notas_array[idx++] = (NotaFinal) iter.siguiente(); // O(1) con iterador
         }
-        // Costo: O(1 + 2 + ... + E) = O(E^2) en el peor caso
-        // Nota: Esto podría optimizarse manteniendo referencia al último nodo,
-        // pero la complejidad dominante del método es O(E log E) por el ordenamiento
         
         // Ordenar: Nota DESCENDENTE, luego ID DESCENDENTE: O(E log E)
         if (M > 0) { // O(1)
@@ -401,8 +412,7 @@ public class Edr {
         }
         
         return notas_array; // O(1)
-        // Costo total: O(E) + O(E^2) + O(E log E) = O(E log E) cuando log E >= E (raro)
-        // En la práctica: O(E^2) domina, pero si optimizamos la lista, sería O(E log E)
+        // Costo total: O(E) + O(E) + O(E log E) = O(E log E). La cota se cumple.
     }
     
     // MergeSort para ordenar NotaFinal: O(n log n)
@@ -472,6 +482,11 @@ public class Edr {
             return Double.compare(b._nota, a._nota); // O(1) - Descendente
         }
         // Si las notas son iguales, por ID descendente: O(1)
-        return Integer.compare(b._id, a._id); // O(1) - Descendente
+        if (b._id < a._id) {
+            return -1;
+        } else if (b._id > a._id) {
+            return 1;
+        }
+        return 0;
     }
 }
