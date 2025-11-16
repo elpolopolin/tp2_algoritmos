@@ -54,7 +54,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L54">            _raiz = x;</span>
 <span class="nc bnc" id="L55" title="All 2 branches missed.">        } else if (y == y.padre.izquierdo) {</span>
 <span class="nc" id="L56">            y.padre.izquierdo = x;</span>
-<span class="nc" id="L57">        } else {</span>
+        } else {
 <span class="nc" id="L58">            y.padre.derecho = x;</span>
         }
         
@@ -81,7 +81,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L81">            _raiz = y;</span>
 <span class="nc bnc" id="L82" title="All 2 branches missed.">        } else if (x == x.padre.izquierdo) {</span>
 <span class="nc" id="L83">            x.padre.izquierdo = y;</span>
-<span class="nc" id="L84">        } else {</span>
+        } else {
 <span class="nc" id="L85">            x.padre.derecho = y;</span>
         }
 
@@ -115,7 +115,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L115">                actual = rotacionIzquierda(actual);</span>
             }
 <span class="nc" id="L117">            actual = proximoPadre;</span>
-        }
+<span class="nc" id="L118">        }</span>
 <span class="nc" id="L119">    }</span>
 
     public T minimo(){
@@ -156,7 +156,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L156">            padre = actual;</span>
 <span class="nc bnc" id="L157" title="All 2 branches missed.">            if (elem.compareTo(actual.valor) &lt; 0) {</span>
 <span class="nc" id="L158">                actual = actual.izquierdo;</span>
-<span class="nc" id="L159">            } else {</span>
+            } else {
 <span class="nc" id="L160">                actual = actual.derecho;</span>
             }
         }
@@ -164,7 +164,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L164">        nuevoNodo.padre = padre;</span>
 <span class="nc bnc" id="L165" title="All 2 branches missed.">        if (elem.compareTo(padre.valor) &lt; 0){</span>
 <span class="nc" id="L166">            padre.izquierdo = nuevoNodo;</span>
-<span class="nc" id="L167">        } else {</span>
+        } else {
 <span class="nc" id="L168">            padre.derecho = nuevoNodo;</span>
         }
         
@@ -179,10 +179,10 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L179">                return true;</span>
 <span class="nc bnc" id="L180" title="All 2 branches missed.">            } else if (comp &lt; 0){</span>
 <span class="nc" id="L181">                actual = actual.izquierdo;</span>
-<span class="nc" id="L182">            } else {</span>
+            } else {
 <span class="nc" id="L183">                actual = actual.derecho;</span>
             }
-        }
+<span class="nc" id="L185">        }</span>
 <span class="nc" id="L186">        return false;</span>
     }
 
@@ -194,10 +194,10 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L194">                break;</span>
 <span class="nc bnc" id="L195" title="All 2 branches missed.">            } else if (comp &lt; 0){</span>
 <span class="nc" id="L196">                n = n.izquierdo;</span>
-<span class="nc" id="L197">            } else {</span>
+            } else {
 <span class="nc" id="L198">                n = n.derecho;</span>
             }
-        }
+<span class="nc" id="L200">        }</span>
 
 <span class="nc bnc" id="L202" title="All 2 branches missed.">        if (n != null){</span>
 <span class="nc" id="L203">            Nodo nodoParaBalancear = null;</span>
@@ -209,7 +209,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L209">                    _raiz = v;</span>
 <span class="nc bnc" id="L210" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
 <span class="nc" id="L211">                    n.padre.izquierdo = v;</span>
-<span class="nc" id="L212">                } else {</span>
+                } else {
 <span class="nc" id="L213">                    n.padre.derecho = v;</span>
                 }
 <span class="nc bnc" id="L215" title="All 2 branches missed.">                if (v != null){</span>
@@ -222,7 +222,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L222">                    _raiz = v;</span>
 <span class="nc bnc" id="L223" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
 <span class="nc" id="L224">                    n.padre.izquierdo = v;</span>
-<span class="nc" id="L225">                } else {</span>
+                } else {
 <span class="nc" id="L226">                    n.padre.derecho = v;</span>
                 }
 <span class="nc bnc" id="L228" title="All 2 branches missed.">                if (v != null){</span>
@@ -239,7 +239,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L239">                    Nodo v_suc = sucesor.derecho;</span>
 <span class="nc bnc" id="L240" title="All 2 branches missed.">                    if (sucesor == sucesor.padre.izquierdo){</span>
 <span class="nc" id="L241">                        sucesor.padre.izquierdo = v_suc;</span>
-<span class="nc" id="L242">                    } else {</span>
+                    } else {
 <span class="nc" id="L243">                        sucesor.padre.derecho = v_suc;</span>
                     }
 <span class="nc bnc" id="L245" title="All 2 branches missed.">                    if (v_suc != null){</span>
@@ -257,7 +257,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc" id="L257">                    _raiz = v_n;</span>
 <span class="nc bnc" id="L258" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
 <span class="nc" id="L259">                    n.padre.izquierdo = v_n;</span>
-<span class="nc" id="L260">                } else {</span>
+                } else {
 <span class="nc" id="L261">                    n.padre.derecho = v_n;</span>
                 }
 <span class="nc" id="L263">                v_n.padre = n.padre;</span>
@@ -310,7 +310,7 @@ public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
 <span class="nc bnc" id="L310" title="All 2 branches missed.">                while (_actual.izquierdo != null){</span>
 <span class="nc" id="L311">                    _actual = _actual.izquierdo;</span>
                 }
-<span class="nc" id="L313">            } else {</span>
+            } else {
 <span class="nc" id="L314">                Nodo p = _actual.padre;</span>
 <span class="nc bnc" id="L315" title="All 4 branches missed.">                while (p != null &amp;&amp; _actual == p.derecho){</span>
 <span class="nc" id="L316">                    _actual = p;</span>

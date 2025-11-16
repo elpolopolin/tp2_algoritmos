@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="aed.EdrTests" time="0.144" tests="15" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="aed.EdrTests" time="0.101" tests="15" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -11,8 +11,9 @@
     <property name="java.vm.specification.version" value="21"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116221805474_3.jar /home/nacho/tp2_algoritmos/target/surefire 2025-11-16T22-18-05_390-jvmRun1 surefire-20251116221805474_1tmp surefire_0-20251116221805474_2tmp"/>
+    <property name="sun.java.command" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116225144154_3.jar /home/nacho/tp2_algoritmos/target/surefire 2025-11-16T22-51-44_093-jvmRun1 surefire-20251116225144154_1tmp surefire_0-20251116225144154_2tmp"/>
     <property name="jdk.debug" value="release"/>
+    <property name="test" value="aed.EdrTests"/>
     <property name="surefire.test.class.path" value="/home/nacho/tp2_algoritmos/target/test-classes:/home/nacho/tp2_algoritmos/target/classes:/home/nacho/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.2/junit-jupiter-engine-5.9.2.jar:/home/nacho/.m2/repository/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar:/home/nacho/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/nacho/.m2/repository/org/junit/platform/junit-platform-commons/1.9.2/junit-platform-commons-1.9.2.jar:/home/nacho/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar:/home/nacho/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/nacho"/>
@@ -26,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116221805474_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116225144154_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.8+9-Ubuntu-0ubuntu124.04.1"/>
     <property name="user.name" value="nacho"/>
@@ -36,6 +37,7 @@
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="maven.ext.class.path" value="/home/nacho/.vscode-server/extensions/oracle.oracle-java-24.1.2/nbcode/java/maven-nblib/netbeans-eventspy.jar"/>
     <property name="localRepository" value="/home/nacho/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-21"/>
     <property name="java.io.tmpdir" value="/tmp"/>
@@ -52,19 +54,19 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="revisar_copias_examenes_incompletos" classname="aed.EdrTests" time="0.067"/>
-  <testcase name="un_alumno_se_copia_de_la_darkweb" classname="aed.EdrTests" time="0.005"/>
-  <testcase name="varios_alumnos_se_copian_de_varios_examenes" classname="aed.EdrTests" time="0.002"/>
-  <testcase name="revisar_copias_examenes_completos" classname="aed.EdrTests" time="0.002"/>
-  <testcase name="los_alumnos_resuelven_varios_problemas" classname="aed.EdrTests" time="0.002"/>
-  <testcase name="nuevo_edr" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="revisar_copias_examenes_incompletos" classname="aed.EdrTests" time="0.048"/>
+  <testcase name="un_alumno_se_copia_de_la_darkweb" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="varios_alumnos_se_copian_de_varios_examenes" classname="aed.EdrTests" time="0.001"/>
+  <testcase name="revisar_copias_examenes_completos" classname="aed.EdrTests" time="0.001"/>
+  <testcase name="los_alumnos_resuelven_varios_problemas" classname="aed.EdrTests" time="0"/>
+  <testcase name="nuevo_edr" classname="aed.EdrTests" time="0.001"/>
   <testcase name="copias_de_exacto_25_porciento" classname="aed.EdrTests" time="0.001"/>
-  <testcase name="no_hay_copiones" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="no_hay_copiones" classname="aed.EdrTests" time="0.001"/>
   <testcase name="todos_copiones" classname="aed.EdrTests" time="0.001"/>
-  <testcase name="darkweb_no_incluye_estudiantes_que_entregaron" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="darkweb_no_incluye_estudiantes_que_entregaron" classname="aed.EdrTests" time="0.001"/>
   <testcase name="varios_alumnos_se_copian_de_la_darkweb" classname="aed.EdrTests" time="0.002"/>
   <testcase name="los_alumnos_resuelven_un_problema" classname="aed.EdrTests" time="0.001"/>
-  <testcase name="alumnos_se_copian_una_vez" classname="aed.EdrTests" time="0.001"/>
-  <testcase name="alumnos_se_copian_mas_de_una_vez" classname="aed.EdrTests" time="0.001"/>
-  <testcase name="no_hay_aliasing_con_los_examenes_subidos" classname="aed.EdrTests" time="0.003"/>
+  <testcase name="alumnos_se_copian_una_vez" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="alumnos_se_copian_mas_de_una_vez" classname="aed.EdrTests" time="0.002"/>
+  <testcase name="no_hay_aliasing_con_los_examenes_subidos" classname="aed.EdrTests" time="0.002"/>
 </testsuite>

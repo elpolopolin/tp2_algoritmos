@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="aed.TestNuestros" time="0.039" tests="13" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="aed.TestNuestros" time="0.129" tests="13" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -11,8 +11,9 @@
     <property name="java.vm.specification.version" value="21"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116221805474_3.jar /home/nacho/tp2_algoritmos/target/surefire 2025-11-16T22-18-05_390-jvmRun1 surefire-20251116221805474_1tmp surefire_0-20251116221805474_2tmp"/>
+    <property name="sun.java.command" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116225147473_3.jar /home/nacho/tp2_algoritmos/target/surefire 2025-11-16T22-51-47_402-jvmRun1 surefire-20251116225147473_1tmp surefire_0-20251116225147473_2tmp"/>
     <property name="jdk.debug" value="release"/>
+    <property name="test" value="aed.TestNuestros"/>
     <property name="surefire.test.class.path" value="/home/nacho/tp2_algoritmos/target/test-classes:/home/nacho/tp2_algoritmos/target/classes:/home/nacho/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.2/junit-jupiter-engine-5.9.2.jar:/home/nacho/.m2/repository/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar:/home/nacho/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/nacho/.m2/repository/org/junit/platform/junit-platform-commons/1.9.2/junit-platform-commons-1.9.2.jar:/home/nacho/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar:/home/nacho/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/nacho"/>
@@ -26,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116221805474_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/nacho/tp2_algoritmos/target/surefire/surefirebooter-20251116225147473_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.8+9-Ubuntu-0ubuntu124.04.1"/>
     <property name="user.name" value="nacho"/>
@@ -36,6 +37,7 @@
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="maven.ext.class.path" value="/home/nacho/.vscode-server/extensions/oracle.oracle-java-24.1.2/nbcode/java/maven-nblib/netbeans-eventspy.jar"/>
     <property name="localRepository" value="/home/nacho/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-21"/>
     <property name="java.io.tmpdir" value="/tmp"/>
@@ -52,17 +54,17 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="entregar_dos_veces_no_rompe" classname="aed.TestNuestros" time="0.005"/>
-  <testcase name="entregar_todos_luego_darkweb_no_cambia" classname="aed.TestNuestros" time="0.002"/>
+  <testcase name="entregar_dos_veces_no_rompe" classname="aed.TestNuestros" time="0.057"/>
   <testcase name="resolver_muchos_ejercicios_mismo_estudiante" classname="aed.TestNuestros" time="0.002"/>
-  <testcase name="resolver_solo_respuestas_incorrectas" classname="aed.TestNuestros" time="0"/>
+  <testcase name="resolver_todo_mal" classname="aed.TestNuestros" time="0.001"/>
   <testcase name="consultarDarkWeb_con_k_mas_grande" classname="aed.TestNuestros" time="0.001"/>
-  <testcase name="chequearCopias_dos_estudiantes_iguales" classname="aed.TestNuestros" time="0.001"/>
-  <testcase name="copiarse_sin_vecinos_no_cambia_nota" classname="aed.TestNuestros" time="0"/>
-  <testcase name="copiarse_sin_respuestas_nuevas" classname="aed.TestNuestros" time="0.002"/>
-  <testcase name="copiarse_desempata_por_id_mas_grande" classname="aed.TestNuestros" time="0.007"/>
+  <testcase name="chequearCopias_dos_estudiantes_iguales" classname="aed.TestNuestros" time="0.002"/>
+  <testcase name="entregar_todos_antes_darkweb_no_cambia" classname="aed.TestNuestros" time="0.001"/>
+  <testcase name="copiarse_sin_vecinos_no_cambia_nota" classname="aed.TestNuestros" time="0.001"/>
+  <testcase name="copiarse_sin_respuestas_nuevas" classname="aed.TestNuestros" time="0.001"/>
+  <testcase name="copiarse_desempata_por_id_mas_grande" classname="aed.TestNuestros" time="0.003"/>
   <testcase name="nuevo_edr_chico" classname="aed.TestNuestros" time="0.001"/>
   <testcase name="resolver_cambia_respuesta" classname="aed.TestNuestros" time="0.001"/>
-  <testcase name="chequearCopias_sin_respuestas" classname="aed.TestNuestros" time="0.001"/>
+  <testcase name="chequearCopias_sin_respuestas" classname="aed.TestNuestros" time="0.003"/>
   <testcase name="consultarDarkWeb_todos_sin_entregar" classname="aed.TestNuestros" time="0.001"/>
 </testsuite>

@@ -17,16 +17,14 @@ public class NotaFinal implements Comparable&lt;NotaFinal&gt; {
     }
 
     @Override
-    public boolean equals(Object obj) { // O(1)
-<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (this == obj) return true; // O(1)</span>
-<span class="pc bpc" id="L22" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof NotaFinal)) return false; // O(1)</span>
-<span class="fc" id="L23">        NotaFinal otra = (NotaFinal) obj; // O(1)</span>
-<span class="pc bpc" id="L24" title="2 of 4 branches missed.">        return this._id == otra._id &amp;&amp; Double.doubleToLongBits(this._nota) == Double.doubleToLongBits(otra._nota); // O(1)</span>
-    }
-
-    @Override
-    public int hashCode() { // O(1)
-<span class="nc" id="L29">        return java.util.Objects.hash(_id, _nota); // O(1)</span>
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L22">            return true;</span>
+        }
+<span class="pc bpc" id="L24" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof NotaFinal)) {</span>
+<span class="nc" id="L25">            return false;}</span>
+<span class="fc" id="L26">        NotaFinal otra = (NotaFinal) obj;</span>
+<span class="pc bpc" id="L27" title="2 of 4 branches missed.">        return this._id == otra._id &amp;&amp; Double.doubleToLongBits(this._nota) == Double.doubleToLongBits(otra._nota);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

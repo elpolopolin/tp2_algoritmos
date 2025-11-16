@@ -17,15 +17,13 @@ public class NotaFinal implements Comparable<NotaFinal> {
     }
 
     @Override
-    public boolean equals(Object obj) { // O(1)
-        if (this == obj) return true; // O(1)
-        if (obj == null || !(obj instanceof NotaFinal)) return false; // O(1)
-        NotaFinal otra = (NotaFinal) obj; // O(1)
-        return this._id == otra._id && Double.doubleToLongBits(this._nota) == Double.doubleToLongBits(otra._nota); // O(1)
-    }
-
-    @Override
-    public int hashCode() { // O(1)
-        return java.util.Objects.hash(_id, _nota); // O(1)
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || !(obj instanceof NotaFinal)) {
+            return false;}
+        NotaFinal otra = (NotaFinal) obj;
+        return this._id == otra._id && Double.doubleToLongBits(this._nota) == Double.doubleToLongBits(otra._nota);
     }
 }

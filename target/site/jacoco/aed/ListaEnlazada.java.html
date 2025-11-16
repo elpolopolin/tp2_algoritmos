@@ -15,18 +15,18 @@ public class ListaEnlazada&lt;T&gt; {
 <span class="fc" id="L15">        }</span>
     }
 
-<span class="fc" id="L18">    public ListaEnlazada(){</span>
-<span class="fc" id="L19">        primero=null;</span>
-<span class="fc" id="L20">    }</span>
+<span class="nc" id="L18">    public ListaEnlazada(){</span>
+<span class="nc" id="L19">        primero=null;</span>
+<span class="nc" id="L20">    }</span>
 
     public int longitud() {
-<span class="fc" id="L23">        int res=0;</span>
-<span class="fc" id="L24">        Nodo nodo_a_contar=this.primero;</span>
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        while (nodo_a_contar != null){</span>
-<span class="fc" id="L26">            res+=1;</span>
-<span class="fc" id="L27">            nodo_a_contar = nodo_a_contar.sig;</span>
+<span class="nc" id="L23">        int res=0;</span>
+<span class="nc" id="L24">        Nodo nodo_a_contar=this.primero;</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        while (nodo_a_contar != null){</span>
+<span class="nc" id="L26">            res+=1;</span>
+<span class="nc" id="L27">            nodo_a_contar = nodo_a_contar.sig;</span>
         }
-<span class="fc" id="L29">        return res;</span>
+<span class="nc" id="L29">        return res;</span>
     }
 
     public void agregarAdelante(T elem) {
@@ -37,19 +37,19 @@ public class ListaEnlazada&lt;T&gt; {
 <span class="nc" id="L37">    }</span>
 
     public void agregarAtras(T elem) {
-<span class="fc" id="L40">        Nodo nodo_a_poner = new Nodo(ultimo, null, elem);</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (ultimo!=null){ultimo.sig=nodo_a_poner;}</span>
-<span class="fc" id="L42">        ultimo=nodo_a_poner;</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (primero == null){primero = nodo_a_poner;};</span>
-<span class="fc" id="L44">    }</span>
+<span class="nc" id="L40">        Nodo nodo_a_poner = new Nodo(ultimo, null, elem);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (ultimo!=null){ultimo.sig=nodo_a_poner;}</span>
+<span class="nc" id="L42">        ultimo=nodo_a_poner;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (primero == null){primero = nodo_a_poner;};</span>
+<span class="nc" id="L44">    }</span>
 
     public T obtener(int i) {
-<span class="fc" id="L47">        Nodo res = primero;</span>
-<span class="fc" id="L48">        int j=0;</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        while(j!=i)</span>
-<span class="fc" id="L50">            {res=res.sig;</span>
-<span class="fc" id="L51">            j+=1;}</span>
-<span class="fc" id="L52">        return res.elem;</span>
+<span class="nc" id="L47">        Nodo res = primero;</span>
+<span class="nc" id="L48">        int j=0;</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        while(j!=i)</span>
+<span class="nc" id="L50">            {res=res.sig;</span>
+<span class="nc" id="L51">            j+=1;}</span>
+<span class="nc" id="L52">        return res.elem;</span>
     }
 
     public void eliminar(int i) {
@@ -105,11 +105,11 @@ public class ListaEnlazada&lt;T&gt; {
 <span class="nc" id="L105">        return lista;</span>
     }
 
-<span class="fc" id="L108">    public class ListaIterador{</span>
-<span class="fc" id="L109">    	int indice = 0;</span>
+<span class="nc" id="L108">    public class ListaIterador{</span>
+<span class="nc" id="L109">    	int indice = 0;</span>
 
         public boolean haySiguiente() {
-<span class="fc bfc" id="L112" title="All 2 branches covered.">	        return (indice != longitud());</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">	        return (indice != longitud());</span>
         }
         
         public boolean hayAnterior() {
@@ -117,11 +117,11 @@ public class ListaEnlazada&lt;T&gt; {
         }
 
         public T siguiente() {
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (haySiguiente()){</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (haySiguiente()){</span>
             int i;
-<span class="fc" id="L122">            i = indice;</span>
-<span class="fc" id="L123">            indice  = indice + 1;</span>
-<span class="fc" id="L124">            return obtener(i);</span>
+<span class="nc" id="L122">            i = indice;</span>
+<span class="nc" id="L123">            indice  = indice + 1;</span>
+<span class="nc" id="L124">            return obtener(i);</span>
         }
 <span class="nc" id="L126">        else {return null;}</span>
         }
@@ -139,7 +139,7 @@ public class ListaEnlazada&lt;T&gt; {
     }
 
     public ListaIterador iterador() {
-<span class="fc" id="L142">	    return new ListaIterador();</span>
+<span class="nc" id="L142">	    return new ListaIterador();</span>
     }
 
 }
