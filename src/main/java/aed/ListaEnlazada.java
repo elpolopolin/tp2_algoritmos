@@ -90,8 +90,13 @@ public class ListaEnlazada<T> {
         String lista="";
         lista+=("[");
         Nodo minodo = primero;
+        int len = longitud();
+        if (len == 0) {
+            lista+=("]");
+            return lista;
+        }
         int i = 0;
-        while (i != longitud()-1){
+        while (i != len-1){
             lista+=(minodo.elem.toString() + ", ");
             minodo= minodo.sig;
             i+=1;

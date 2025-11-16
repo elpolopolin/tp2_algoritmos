@@ -64,6 +64,7 @@ public class Edr {
         double[] res = new double[estudiantes.length]; // O(E)
         for (int i = 0; i < estudiantes.length; i++) { // Bucle O(E)
             res[i] = estudiantes[i].puntaje; // O(1)
+            System.out.println("DEBUG: notas() - Student " + i + " puntaje: " + estudiantes[i].puntaje); // O(1)
         }
         return res; // O(1)
     }
@@ -94,31 +95,45 @@ public class Edr {
     }
 
     // Complejidad: O(R + log E)
-    public void copiarse(int estudiante_id) { // O(R + log E)
+    public void copiarse(int estudiante_id) {
         Estudiante est = estudiantes[estudiante_id]; // O(1)
         
-        // 1. Identificar estudiantes cercanos
+        // 1. Identificar estudiantes cercanos según regla del consigna.
+        // Left = id-1, Right = id+1, Adelante = id - C (C = estudiantes por fila)
         int[] vecinos_ids = new int[3]; // O(1)
         int num_vecinos = 0; // O(1)
 
-        // Izquierda de por medio: [estudianteCercano, vacio, mi estudiante]
-        if (estudiante_id % LadoAula >= 2) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id - 2; // O(1)
+        // calcular C = estudiantes por fila (si LadoAula par -> LadoAula/2, si impar -> (LadoAula+1)/2)
+        int C;
+        if (LadoAula % 2 == 0) {
+                C = LadoAula / 2; // O(1)
+        } else {
+            C = (LadoAula + 1) / 2; // O(1)
         }
-        // Derecha de por medio: [mi estudiante, vacio, estudianteCercano]
-        if (estudiante_id % LadoAula < LadoAula - 2 && (estudiante_id + 2) < estudiantes.length) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id + 2; // O(1)
-        }
-        // Arriba (inmediatamente arriba)
-        if (estudiante_id >= LadoAula) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id - LadoAula; // O(1)
+
+        // Izquierda: id-1 (existe si posición en fila > 0)
+            // Izquierda: id-1 (existe si está en la misma fila)
+            if (estudiante_id > 0 && (estudiante_id / C) == ((estudiante_id - 1) / C)) {
+                vecinos_ids[num_vecinos++] = estudiante_id - 1;
+            }
+        // Derecha: id+1 (existe si posición en fila < C-1 y dentro de total estudiantes)
+            // Derecha: id+1 (existe si está en la misma fila y dentro del total)
+            if ((estudiante_id + 1) < estudiantes.length && (estudiante_id / C) == ((estudiante_id + 1) / C)) {
+                vecinos_ids[num_vecinos++] = estudiante_id + 1;
+            }
+        // Adelante (arriba): id - C (existe si estamos en fila > 0, es decir id >= C)
+        if (estudiante_id >= C) {
+            int adelante = estudiante_id - C;
+            if (adelante >= 0 && adelante < estudiantes.length) {
+                vecinos_ids[num_vecinos++] = adelante;
+            }
         }
 
         int mejor_vecino_id = -1; // O(1)
         int max_respuestas_nuevas = -1; // O(1)
 
         // 2. Encontrar el mejor vecino (3 iteraciones max)
-        for (int i = 0; i < num_vecinos; i++) { // Bucle O(1) (max 3 veces)
+        for (int i = 0; i < num_vecinos; i++) {
             int vecino_id = vecinos_ids[i]; // O(1)
             Estudiante potencial_vecino = estudiantes[vecino_id]; // O(1)
             
@@ -139,17 +154,17 @@ public class Edr {
             }
         }
 
-        if (mejor_vecino_id == -1 || max_respuestas_nuevas == 0) return; // O(1)
-
-        est.esCopion = true;
+        // If none of the 3 neighbors provide new answers, do nothing.
+        // Spec: only consider those three neighbors; do NOT fall back to the whole class.
+        if (mejor_vecino_id == -1 || max_respuestas_nuevas == 0) {
+            return; // nothing to copy from the allowed neighbors
+        }
 
         // 3. Copiar la primera respuesta y recalcular puntaje
         Estudiante vecino = estudiantes[mejor_vecino_id]; // O(1)
         for (int j = 0; j < ExamenCanonico.length; j++) { // Bucle O(R)
-            if (vecino.respuestas[j] != -1 && est.respuestas[j] == -1) { // O(1)
-                
+            if (vecino.respuestas[j] != -1 && est.respuestas[j] == -1) { // O(1)      
                 int respuesta_a_copiar = vecino.respuestas[j]; // O(1)
-                
                 boolean esCorrecta = (respuesta_a_copiar == ExamenCanonico[j]); // O(1)
 
                 if (esCorrecta) { // O(1)
@@ -165,7 +180,7 @@ public class Edr {
                         puntajesDeEstudiantes.actualizarPrioridad(est.heap_handle); // O(log E)
                     }
                 }
-                
+
                 return; // O(1)
             }
         }
@@ -209,7 +224,8 @@ public class Edr {
 
     // Complejidad: O(E*R) asumiendo que el valor de las respuestas es acotado.
         public int[] chequearCopias() {
-            boolean alguienSeCopio = false;
+                System.out.println("DEBUG chequearCopias ENTER");
+                boolean alguienSeCopio = false;
             for (int i = 0; i < estudiantes.length; i++) {
                 if (estudiantes[i].esCopion) {
                     alguienSeCopio = true;
@@ -317,6 +333,7 @@ public class Edr {
                         res[index++] = i;
                     }
                 }
+                System.out.println("DEBUG chequearCopias estadistico -> copiones detectados: " + Arrays.toString(res));
                 return res;
             }
         }
@@ -382,6 +399,6 @@ public class Edr {
         if (a._nota != b._nota) { // O(1)
             return Double.compare(b._nota, a._nota); // O(1)
         }
-        return Integer.compare(b._id, a._id); // O(1)
+        return Integer.compare(a._id, b._id); // O(1)
     }
 }
