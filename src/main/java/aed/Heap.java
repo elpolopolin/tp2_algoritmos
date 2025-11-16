@@ -49,17 +49,9 @@ public class Heap<T extends Comparable<T>> {
         return _cardinal;
     }
 
-    private int padre(int i) { 
-        return (i - 1) / 2; 
-    }
-    private int hijoIzq(int i) { 
-        return 2 * i + 1; 
-    }
-    private int hijoDer(int i) 
-    { 
-        return 2 * i + 2; 
-    }
-
+    private int padre(int i) { return (i - 1) / 2; }
+    private int hijoIzq(int i) { return 2 * i + 1; }
+    private int hijoDer(int i) { return 2 * i + 2; }
 
     private void swap(int i, int j) {
         HandleHeap h_i = _array.get(i);
