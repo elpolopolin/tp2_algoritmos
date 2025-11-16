@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AVL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo4</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">AVL.java</span></div><h1>AVL.java</h1><pre class="source lang-java linenums">package aed;
+public class AVL&lt;T extends Comparable&lt;T&gt;&gt; {
+    private Nodo _raiz;
+    private int _cardinal;
+
+    private class Nodo {
+        T valor;
+        Nodo izquierdo;
+        Nodo derecho;
+        Nodo padre;
+        int altura;
+
+<span class="nc" id="L13">        Nodo(T v) {</span>
+<span class="nc" id="L14">            this.valor = v;</span>
+<span class="nc" id="L15">            this.izquierdo = null;</span>
+<span class="nc" id="L16">            this.derecho = null;</span>
+<span class="nc" id="L17">            this.padre = null;</span>
+<span class="nc" id="L18">            this.altura = 1;</span>
+<span class="nc" id="L19">        }</span>
+    }
+
+<span class="nc" id="L22">    public AVL(){</span>
+<span class="nc" id="L23">        _raiz = null;</span>
+<span class="nc" id="L24">        _cardinal = 0;</span>
+<span class="nc" id="L25">    }</span>
+
+    public int cardinal(){
+<span class="nc" id="L28">        return _cardinal;</span>
+    }
+
+    private int altura(Nodo n) {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        return (n == null) ? 0 : n.altura;</span>
+    }
+
+    private void actualizarAltura(Nodo n) {
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (n != null) {</span>
+<span class="nc" id="L37">            n.altura = 1 + Math.max(altura(n.izquierdo), altura(n.derecho));</span>
+        }
+<span class="nc" id="L39">    }</span>
+
+    private int factorBalanceo(Nodo n) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        return (n == null) ? 0 : altura(n.izquierdo) - altura(n.derecho);</span>
+    }
+
+    private Nodo rotacionDerecha(Nodo y) {
+<span class="nc" id="L46">        Nodo x = y.izquierdo;</span>
+<span class="nc" id="L47">        Nodo T2 = x.derecho;</span>
+
+<span class="nc" id="L49">        x.derecho = y;</span>
+<span class="nc" id="L50">        y.izquierdo = T2;</span>
+
+<span class="nc" id="L52">        x.padre = y.padre;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (y.padre == null) {</span>
+<span class="nc" id="L54">            _raiz = x;</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        } else if (y == y.padre.izquierdo) {</span>
+<span class="nc" id="L56">            y.padre.izquierdo = x;</span>
+<span class="nc" id="L57">        } else {</span>
+<span class="nc" id="L58">            y.padre.derecho = x;</span>
+        }
+        
+<span class="nc" id="L61">        y.padre = x;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (T2 != null) {</span>
+<span class="nc" id="L63">            T2.padre = y;</span>
+        }
+
+<span class="nc" id="L66">        actualizarAltura(y);</span>
+<span class="nc" id="L67">        actualizarAltura(x);</span>
+
+<span class="nc" id="L69">        return x;</span>
+    }
+
+    private Nodo rotacionIzquierda(Nodo x) {
+<span class="nc" id="L73">        Nodo y = x.derecho;</span>
+<span class="nc" id="L74">        Nodo T2 = y.izquierdo;</span>
+
+<span class="nc" id="L76">        y.izquierdo = x;</span>
+<span class="nc" id="L77">        x.derecho = T2;</span>
+        
+<span class="nc" id="L79">        y.padre = x.padre;</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (x.padre == null) {</span>
+<span class="nc" id="L81">            _raiz = y;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        } else if (x == x.padre.izquierdo) {</span>
+<span class="nc" id="L83">            x.padre.izquierdo = y;</span>
+<span class="nc" id="L84">        } else {</span>
+<span class="nc" id="L85">            x.padre.derecho = y;</span>
+        }
+
+<span class="nc" id="L88">        x.padre = y;</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (T2 != null) {</span>
+<span class="nc" id="L90">            T2.padre = x;</span>
+        }
+
+<span class="nc" id="L93">        actualizarAltura(x);</span>
+<span class="nc" id="L94">        actualizarAltura(y);</span>
+
+<span class="nc" id="L96">        return y;</span>
+    }
+
+    private void balancear(Nodo n) {
+<span class="nc" id="L100">        Nodo actual = n;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        while (actual != null) {</span>
+<span class="nc" id="L102">            actualizarAltura(actual);</span>
+<span class="nc" id="L103">            int fb = factorBalanceo(actual);</span>
+<span class="nc" id="L104">            Nodo proximoPadre = actual.padre;</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            if (fb &gt; 1) { </span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                if (factorBalanceo(actual.izquierdo) &lt; 0) {</span>
+<span class="nc" id="L108">                    actual.izquierdo = rotacionIzquierda(actual.izquierdo);</span>
+                }
+<span class="nc" id="L110">                actual = rotacionDerecha(actual);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            } else if (fb &lt; -1) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                if (factorBalanceo(actual.derecho) &gt; 0) {</span>
+<span class="nc" id="L113">                    actual.derecho = rotacionDerecha(actual.derecho);</span>
+                }
+<span class="nc" id="L115">                actual = rotacionIzquierda(actual);</span>
+            }
+<span class="nc" id="L117">            actual = proximoPadre;</span>
+        }
+<span class="nc" id="L119">    }</span>
+
+    public T minimo(){
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (_raiz == null) {</span>
+<span class="nc" id="L123">            return null;</span>
+        }
+<span class="nc" id="L125">        Nodo actual = _raiz;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        while (actual.izquierdo != null) {</span>
+<span class="nc" id="L127">            actual = actual.izquierdo;</span>
+        }
+<span class="nc" id="L129">        return actual.valor;</span>
+    }
+    
+    public T maximo(){
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (_raiz == null) {</span>
+<span class="nc" id="L134">            return null;</span>
+        }
+<span class="nc" id="L136">        Nodo actual = _raiz;</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        while (actual.derecho != null){</span>
+<span class="nc" id="L138">            actual = actual.derecho;</span>
+        }
+<span class="nc" id="L140">        return actual.valor;</span>
+    }
+    
+    public void insertar(T elem){
+<span class="nc" id="L144">        Nodo nuevoNodo = new Nodo(elem);</span>
+<span class="nc" id="L145">        _cardinal++;</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (_raiz == null){</span>
+<span class="nc" id="L148">            _raiz = nuevoNodo;</span>
+<span class="nc" id="L149">            return;</span>
+        }
+
+<span class="nc" id="L152">        Nodo actual = _raiz;</span>
+<span class="nc" id="L153">        Nodo padre = null;</span>
+
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        while (actual != null){</span>
+<span class="nc" id="L156">            padre = actual;</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            if (elem.compareTo(actual.valor) &lt; 0) {</span>
+<span class="nc" id="L158">                actual = actual.izquierdo;</span>
+<span class="nc" id="L159">            } else {</span>
+<span class="nc" id="L160">                actual = actual.derecho;</span>
+            }
+        }
+
+<span class="nc" id="L164">        nuevoNodo.padre = padre;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (elem.compareTo(padre.valor) &lt; 0){</span>
+<span class="nc" id="L166">            padre.izquierdo = nuevoNodo;</span>
+<span class="nc" id="L167">        } else {</span>
+<span class="nc" id="L168">            padre.derecho = nuevoNodo;</span>
+        }
+        
+<span class="nc" id="L171">        balancear(nuevoNodo.padre);</span>
+<span class="nc" id="L172">    }</span>
+
+    public boolean pertenece(T elem){
+<span class="nc" id="L175">        Nodo actual = _raiz;</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        while (actual != null){</span>
+<span class="nc" id="L177">            int comp = elem.compareTo(actual.valor);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            if (comp == 0) {</span>
+<span class="nc" id="L179">                return true;</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">            } else if (comp &lt; 0){</span>
+<span class="nc" id="L181">                actual = actual.izquierdo;</span>
+<span class="nc" id="L182">            } else {</span>
+<span class="nc" id="L183">                actual = actual.derecho;</span>
+            }
+        }
+<span class="nc" id="L186">        return false;</span>
+    }
+
+    public void eliminar(T elem){
+<span class="nc" id="L190">        Nodo n = _raiz;</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        while (n != null){</span>
+<span class="nc" id="L192">            int comp = elem.compareTo(n.valor);</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (comp == 0){</span>
+<span class="nc" id="L194">                break;</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            } else if (comp &lt; 0){</span>
+<span class="nc" id="L196">                n = n.izquierdo;</span>
+<span class="nc" id="L197">            } else {</span>
+<span class="nc" id="L198">                n = n.derecho;</span>
+            }
+        }
+
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (n != null){</span>
+<span class="nc" id="L203">            Nodo nodoParaBalancear = null;</span>
+            
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            if (n.izquierdo == null){</span>
+<span class="nc" id="L206">                nodoParaBalancear = n.padre;</span>
+<span class="nc" id="L207">                Nodo v = n.derecho;</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">                if (n.padre == null){</span>
+<span class="nc" id="L209">                    _raiz = v;</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
+<span class="nc" id="L211">                    n.padre.izquierdo = v;</span>
+<span class="nc" id="L212">                } else {</span>
+<span class="nc" id="L213">                    n.padre.derecho = v;</span>
+                }
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                if (v != null){</span>
+<span class="nc" id="L216">                    v.padre = n.padre;</span>
+<span class="nc" id="L217">                }} </span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">            else if (n.derecho == null){</span>
+<span class="nc" id="L219">                nodoParaBalancear = n.padre;</span>
+<span class="nc" id="L220">                Nodo v = n.izquierdo;</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                if (n.padre == null){</span>
+<span class="nc" id="L222">                    _raiz = v;</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
+<span class="nc" id="L224">                    n.padre.izquierdo = v;</span>
+<span class="nc" id="L225">                } else {</span>
+<span class="nc" id="L226">                    n.padre.derecho = v;</span>
+                }
+<span class="nc bnc" id="L228" title="All 2 branches missed.">                if (v != null){</span>
+<span class="nc" id="L229">                    v.padre = n.padre;</span>
+<span class="nc" id="L230">                }} </span>
+            else {
+<span class="nc" id="L232">                Nodo sucesor = n.derecho;</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                while (sucesor.izquierdo != null){</span>
+<span class="nc" id="L234">                    sucesor = sucesor.izquierdo;</span>
+                }
+                
+<span class="nc bnc" id="L237" title="All 2 branches missed.">                if(sucesor.padre != n){</span>
+<span class="nc" id="L238">                    nodoParaBalancear = sucesor.padre;</span>
+<span class="nc" id="L239">                    Nodo v_suc = sucesor.derecho;</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                    if (sucesor == sucesor.padre.izquierdo){</span>
+<span class="nc" id="L241">                        sucesor.padre.izquierdo = v_suc;</span>
+<span class="nc" id="L242">                    } else {</span>
+<span class="nc" id="L243">                        sucesor.padre.derecho = v_suc;</span>
+                    }
+<span class="nc bnc" id="L245" title="All 2 branches missed.">                    if (v_suc != null){</span>
+<span class="nc" id="L246">                        v_suc.padre = sucesor.padre;</span>
+                    }
+                    
+<span class="nc" id="L249">                    sucesor.derecho = n.derecho;</span>
+<span class="nc" id="L250">                    sucesor.derecho.padre = sucesor;}</span>
+                else {
+<span class="nc" id="L252">                    nodoParaBalancear = sucesor;</span>
+                }
+
+<span class="nc" id="L255">                Nodo v_n = sucesor;</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                if (n.padre == null) {</span>
+<span class="nc" id="L257">                    _raiz = v_n;</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                } else if (n == n.padre.izquierdo){</span>
+<span class="nc" id="L259">                    n.padre.izquierdo = v_n;</span>
+<span class="nc" id="L260">                } else {</span>
+<span class="nc" id="L261">                    n.padre.derecho = v_n;</span>
+                }
+<span class="nc" id="L263">                v_n.padre = n.padre;</span>
+                
+<span class="nc" id="L265">                sucesor.izquierdo = n.izquierdo;</span>
+<span class="nc" id="L266">                sucesor.izquierdo.padre = sucesor;</span>
+            }
+<span class="nc" id="L268">            _cardinal--;</span>
+            
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (nodoParaBalancear != null) {</span>
+<span class="nc" id="L271">                balancear(nodoParaBalancear);</span>
+            }
+        }
+<span class="nc" id="L274">    }</span>
+
+    @Override
+    public String toString(){
+<span class="nc" id="L278">        String s = &quot;{&quot;;</span>
+<span class="nc" id="L279">        AVL_Iterador iterador = this.iterador(); </span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        if (iterador.haySiguiente()){</span>
+<span class="nc" id="L281">            s += iterador.siguiente().toString();</span>
+        }
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        while (iterador.haySiguiente()){</span>
+<span class="nc" id="L284">            s += &quot;, &quot;;</span>
+<span class="nc" id="L285">            s += iterador.siguiente().toString();</span>
+        }
+<span class="nc" id="L287">        s += &quot;}&quot;;</span>
+<span class="nc" id="L288">        return s;</span>
+    }
+
+    public class AVL_Iterador{
+        private Nodo _actual;
+
+<span class="nc" id="L294">        public AVL_Iterador(){</span>
+<span class="nc" id="L295">            _actual = _raiz;</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">            if (_actual != null){</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">                while (_actual.izquierdo != null){</span>
+<span class="nc" id="L298">                    _actual = _actual.izquierdo;</span>
+                }
+            }
+<span class="nc" id="L301">        }</span>
+
+        public boolean haySiguiente(){
+<span class="nc bnc" id="L304" title="All 2 branches missed.">            return _actual != null;</span>
+        }
+        public T siguiente(){
+<span class="nc" id="L307">            T valor = _actual.valor;</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">            if (_actual.derecho != null){</span>
+<span class="nc" id="L309">                _actual = _actual.derecho;</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                while (_actual.izquierdo != null){</span>
+<span class="nc" id="L311">                    _actual = _actual.izquierdo;</span>
+                }
+<span class="nc" id="L313">            } else {</span>
+<span class="nc" id="L314">                Nodo p = _actual.padre;</span>
+<span class="nc bnc" id="L315" title="All 4 branches missed.">                while (p != null &amp;&amp; _actual == p.derecho){</span>
+<span class="nc" id="L316">                    _actual = p;</span>
+<span class="nc" id="L317">                    p = p.padre;</span>
+                }
+<span class="nc" id="L319">                _actual = p;</span>
+            }
+<span class="nc" id="L321">            return valor;</span>
+        }
+    }
+
+    public AVL_Iterador iterador(){
+<span class="nc" id="L326">        return new AVL_Iterador();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

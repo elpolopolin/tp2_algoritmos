@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Edr.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo4</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">Edr.java</span></div><h1>Edr.java</h1><pre class="source lang-java linenums">package aed;
+// E: cantidad total de estudiantes
+// R: cantidad total de respuestas del examen
+// k: parámetro para consultarDarkWeb
+// S: cantidad de sospechosos
+// V: cantidad de notas válidas
+public class Edr {
+    private class Estudiante implements Comparable&lt;Estudiante&gt; {
+        int id; // O(1)
+        int[] respuestas; // O(1)
+        double puntaje; // O(1)
+        boolean entregado; // O(1)
+        int respuestasCorrectas; // O(1)
+        boolean esCopion; // O(1)
+        Handle&lt;Estudiante&gt; heap_handle; // O(1)
+
+<span class="fc" id="L17">        Estudiante(int id, int R) { // O(R)</span>
+<span class="fc" id="L18">            this.id = id; // O(1)</span>
+<span class="fc" id="L19">            this.respuestas = new int[R]; // O(R)</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">            for (int i = 0; i &lt; R; i++) { // Bucle O(R)</span>
+<span class="fc" id="L21">                this.respuestas[i] = -1; // O(1)</span>
+            }
+<span class="fc" id="L23">            this.puntaje = 0.0; // O(1)</span>
+<span class="fc" id="L24">            this.entregado = false; // O(1)</span>
+<span class="fc" id="L25">            this.respuestasCorrectas = 0; // O(1)</span>
+<span class="fc" id="L26">            this.esCopion = false; // O(1)</span>
+<span class="fc" id="L27">            this.heap_handle = null; // O(1)</span>
+<span class="fc" id="L28">        }</span>
+
+        @Override
+        public int compareTo(Estudiante otro) { // O(1)
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (this.puntaje != otro.puntaje) { // O(1)</span>
+<span class="fc" id="L33">                return Double.compare(this.puntaje, otro.puntaje); // O(1)</span>
+            }
+<span class="fc" id="L35">            return Integer.compare(this.id, otro.id); // O(1)</span>
+        }
+    }
+
+    private Estudiante[] estudiantes; // O(1)
+    private Heap&lt;Estudiante&gt; puntajesDeEstudiantes; // O(1)
+    private int[] ExamenCanonico; // O(1)
+    private int LadoAula; // O(1)
+<span class="fc" id="L43">    private boolean[] _esCopion = null; // O(1)</span>
+
+    // Complejidad: O(E*R)
+<span class="fc" id="L46">    public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) { // O(E*R)</span>
+<span class="fc" id="L47">        this.LadoAula = LadoAula; // O(1)</span>
+<span class="fc" id="L48">        this.ExamenCanonico = new int[ExamenCanonico.length]; // O(R)</span>
+<span class="fc" id="L49">        System.arraycopy(ExamenCanonico, 0, this.ExamenCanonico, 0, ExamenCanonico.length); // O(R)</span>
+<span class="fc" id="L50">        this.estudiantes = new Estudiante[Cant_estudiantes]; // O(E)</span>
+<span class="fc" id="L51">        this.puntajesDeEstudiantes = new Heap&lt;&gt;(); // O(1)</span>
+<span class="fc" id="L52">        int R = this.ExamenCanonico.length; // O(1)</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (int i = 0; i &lt; Cant_estudiantes; i++) { // Bucle O(E)</span>
+<span class="fc" id="L54">            Estudiante est = new Estudiante(i, R); // O(R)</span>
+<span class="fc" id="L55">            est.heap_handle = puntajesDeEstudiantes.insertar(est); // O(log E)</span>
+<span class="fc" id="L56">            estudiantes[i] = est; // O(1)</span>
+        }
+<span class="fc" id="L58">    }</span>
+
+    // Complejidad: O(E)
+    public double[] notas() { // O(E)
+<span class="fc" id="L62">        double[] res = new double[estudiantes.length]; // O(E)</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (int i = 0; i &lt; estudiantes.length; i++) { // Bucle O(E)</span>
+<span class="fc" id="L64">            res[i] = estudiantes[i].puntaje; // O(1)</span>
+        }
+<span class="fc" id="L66">        return res; // O(1)</span>
+    }
+
+    // Complejidad: O(log E)
+    public void resolver(int estudiante, int NroEjercicio, int res) { // O(log E)
+<span class="fc" id="L71">        Estudiante est = estudiantes[estudiante]; // O(1)</span>
+<span class="fc" id="L72">        int respuesta_previa = est.respuestas[NroEjercicio]; // O(1)</span>
+<span class="fc" id="L73">        est.respuestas[NroEjercicio] = res;</span>
+
+<span class="fc bfc" id="L75" title="All 4 branches covered.">        boolean eraCorrecta = (respuesta_previa != -1 &amp;&amp; respuesta_previa == ExamenCanonico[NroEjercicio]); // O(1)</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">        boolean esCorrecta = (res != -1 &amp;&amp; res == ExamenCanonico[NroEjercicio]); // O(1)</span>
+
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">        if (eraCorrecta &amp;&amp; !esCorrecta) { // O(1)</span>
+<span class="fc" id="L79">            est.respuestasCorrectas--; // O(1)</span>
+<span class="pc bpc" id="L80" title="1 of 4 branches missed.">        } else if (!eraCorrecta &amp;&amp; esCorrecta) { // O(1)</span>
+<span class="fc" id="L81">            est.respuestasCorrectas++; // O(1)</span>
+        }
+
+<span class="fc" id="L84">        double nuevo_puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)</span>
+
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (nuevo_puntaje != est.puntaje) { // O(1)</span>
+<span class="fc" id="L87">            est.puntaje = nuevo_puntaje; // O(1)</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (est.heap_handle != null) { // O(1)</span>
+<span class="fc" id="L89">                puntajesDeEstudiantes.actualizarPrioridad(est.heap_handle); // O(log E)</span>
+            }
+        }
+<span class="fc" id="L92">    }</span>
+
+    // Complejidad: O(R + log E)
+    public void copiarse(int estudiante_id) {
+<span class="fc" id="L96">        Estudiante est = estudiantes[estudiante_id]; // O(1)</span>
+<span class="fc" id="L97">        int[] vecinos_ids = new int[3]; // O(1)</span>
+<span class="fc" id="L98">        int num_vecinos = 0; // O(1)</span>
+
+        // calcular C = estudiantes por fila (si LadoAula par -&gt; LadoAula/2, si impar -&gt; (LadoAula+1)/2)
+        int C;
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (LadoAula % 2 == 0) {</span>
+<span class="fc" id="L103">                C = LadoAula / 2; // O(1)</span>
+<span class="fc" id="L104">        } else {</span>
+<span class="fc" id="L105">            C = (LadoAula + 1) / 2; // O(1)</span>
+        }
+
+        // Izquierda: id-1 (existe si posición en fila &gt; 0)
+<span class="fc bfc" id="L109" title="All 4 branches covered.">            if (estudiante_id &gt; 0 &amp;&amp; (estudiante_id / C) == ((estudiante_id - 1) / C)) {</span>
+<span class="fc" id="L110">                vecinos_ids[num_vecinos++] = estudiante_id - 1;</span>
+            }
+        // Derecha: id+1 (existe si posición en fila &lt; C-1 y dentro de total estudiantes)
+<span class="pc bpc" id="L113" title="1 of 4 branches missed.">            if ((estudiante_id + 1) &lt; estudiantes.length &amp;&amp; (estudiante_id / C) == ((estudiante_id + 1) / C)) {</span>
+<span class="fc" id="L114">                vecinos_ids[num_vecinos++] = estudiante_id + 1;</span>
+            }
+        // Adelante (arriba): id - C (existe si estamos en fila &gt; 0, es decir id &gt;= C)
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (estudiante_id &gt;= C) {</span>
+<span class="fc" id="L118">            int adelante = estudiante_id - C;</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">            if (adelante &gt;= 0 &amp;&amp; adelante &lt; estudiantes.length) {</span>
+<span class="fc" id="L120">                vecinos_ids[num_vecinos++] = adelante;</span>
+            }
+        }
+
+<span class="fc" id="L124">        int mejor_vecino_id = -1; // O(1)</span>
+<span class="fc" id="L125">        int max_respuestas_nuevas = -1; // O(1)</span>
+
+        // 2. Encontrar el mejor vecino (3 iteraciones max)
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (int i = 0; i &lt; num_vecinos; i++) {</span>
+<span class="fc" id="L129">            int vecino_id = vecinos_ids[i]; // O(1)</span>
+<span class="fc" id="L130">            Estudiante potencial_vecino = estudiantes[vecino_id]; // O(1)</span>
+            
+<span class="fc" id="L132">            int respuestas_nuevas = 0; // O(1)</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            for (int j = 0; j &lt; ExamenCanonico.length; j++) { // Bucle O(R)</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">                if (potencial_vecino.respuestas[j] != -1 &amp;&amp; est.respuestas[j] == -1) { // O(1)</span>
+<span class="fc" id="L135">                    respuestas_nuevas++; // O(1)</span>
+                }
+            }
+
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (respuestas_nuevas &gt; max_respuestas_nuevas) { // O(1)</span>
+<span class="fc" id="L140">                max_respuestas_nuevas = respuestas_nuevas; // O(1)</span>
+<span class="fc" id="L141">                mejor_vecino_id = vecino_id; // O(1)</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            } else if (respuestas_nuevas == max_respuestas_nuevas) { // O(1)</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                if (vecino_id &gt; mejor_vecino_id) { // O(1)</span>
+<span class="fc" id="L144">                    mejor_vecino_id = vecino_id; // O(1)</span>
+                }
+            }
+        }
+<span class="fc bfc" id="L148" title="All 4 branches covered.">        if (mejor_vecino_id == -1 || max_respuestas_nuevas == 0) {</span>
+<span class="fc" id="L149">            return;</span>
+        }
+
+        // Copiar la primera respuesta y recalcular puntaje
+<span class="fc" id="L153">        Estudiante vecino = estudiantes[mejor_vecino_id]; // O(1)</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        for (int j = 0; j &lt; ExamenCanonico.length; j++) { // Bucle O(R)</span>
+<span class="fc bfc" id="L155" title="All 4 branches covered.">            if (vecino.respuestas[j] != -1 &amp;&amp; est.respuestas[j] == -1) { // O(1)      </span>
+<span class="fc" id="L156">                int respuesta_a_copiar = vecino.respuestas[j]; // O(1)</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                boolean esCorrecta = (respuesta_a_copiar == ExamenCanonico[j]); // O(1)</span>
+
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">                if (esCorrecta) { // O(1)</span>
+<span class="fc" id="L160">                    est.respuestasCorrectas++; // O(1)</span>
+                }
+
+<span class="fc" id="L163">                est.respuestas[j] = respuesta_a_copiar; // O(1)</span>
+<span class="fc" id="L164">                double nuevo_puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)</span>
+
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                if (nuevo_puntaje != est.puntaje) { // O(1)</span>
+<span class="fc" id="L167">                    est.puntaje = nuevo_puntaje; // O(1)</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                    if (est.heap_handle != null) { // O(1)</span>
+<span class="fc" id="L169">                        puntajesDeEstudiantes.actualizarPrioridad(est.heap_handle); // O(log E)</span>
+                    }
+                }
+
+<span class="fc" id="L173">                return; // O(1)</span>
+            }
+        }
+<span class="nc" id="L176">    }</span>
+
+    // Complejidad: O(log E)
+    public void entregar(int estudiante) { // O(log E)
+<span class="fc" id="L180">        Estudiante est = estudiantes[estudiante]; // O(1)</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (!est.entregado) { // O(1)</span>
+<span class="fc" id="L182">            est.entregado = true; // O(1)</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">            if (est.heap_handle != null) { // O(1)</span>
+<span class="fc" id="L184">                est.heap_handle.eliminar(); // O(log E)</span>
+<span class="fc" id="L185">                est.heap_handle = null; // O(1)</span>
+            }
+        }
+<span class="fc" id="L188">    }</span>
+
+    // Complejidad: O(k * (R + log E))
+    public void consultarDarkWeb(int k, int[] examenDW) { // O(k * (R + log E))
+<span class="fc" id="L192">        ListaEnlazada&lt;Estudiante&gt; peores = new ListaEnlazada&lt;&gt;(); // O(1)</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        int count = (k &lt; puntajesDeEstudiantes.cardinal()) ? k : puntajesDeEstudiantes.cardinal(); // O(1)</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        for (int i = 0; i &lt; count; i++) { // Bucle O(k)</span>
+<span class="fc" id="L195">            Estudiante extraido = puntajesDeEstudiantes.extraerMinimo(); // O(log E)</span>
+<span class="fc" id="L196">            peores.agregarAtras(extraido); // O(log E)</span>
+        }
+
+<span class="fc" id="L199">        ListaEnlazada.ListaIterador iter = peores.iterador(); // O(1)</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        while (iter.haySiguiente()) { // Bucle O(k)</span>
+<span class="fc" id="L201">            Estudiante est = (Estudiante) iter.siguiente(); // O(1)</span>
+<span class="fc" id="L202">            est.respuestas = examenDW.clone(); // O(R)</span>
+            
+<span class="fc" id="L204">            est.respuestasCorrectas = 0; // O(1)</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for(int i=0; i &lt; est.respuestas.length; i++){ // Bucle O(R)</span>
+<span class="pc bpc" id="L206" title="1 of 4 branches missed.">                if(est.respuestas[i] != -1 &amp;&amp; est.respuestas[i] == ExamenCanonico[i]){ // O(1)</span>
+<span class="fc" id="L207">                    est.respuestasCorrectas++; // O(1)</span>
+                }
+            }
+<span class="fc" id="L210">            est.puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)</span>
+<span class="fc" id="L211">            est.heap_handle = puntajesDeEstudiantes.insertar(est); // O(log E)</span>
+        }
+<span class="fc" id="L213">    }</span>
+
+    // Complejidad: O(E*R) ya que el valor de las respuestas es acotado.
+        public int[] chequearCopias() {
+<span class="fc" id="L217">                boolean alguienSeCopio = false;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">            for (int i = 0; i &lt; estudiantes.length; i++) {</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                if (estudiantes[i].esCopion) {</span>
+<span class="nc" id="L220">                    alguienSeCopio = true;</span>
+<span class="nc" id="L221">                    break;</span>
+                }
+            }
+    
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            if (alguienSeCopio) {</span>
+<span class="nc" id="L226">                int count = 0;</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                for (int i = 0; i &lt; estudiantes.length; i++) {</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">                    if (estudiantes[i].esCopion) {</span>
+<span class="nc" id="L229">                        count++;</span>
+                    }
+                }
+<span class="nc" id="L232">                int[] res = new int[count];</span>
+<span class="nc" id="L233">                int index = 0;</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">                for (int i = 0; i &lt; estudiantes.length; i++) {</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                    if (estudiantes[i].esCopion) {</span>
+<span class="nc" id="L236">                        res[index++] = i;</span>
+                    }
+                }
+<span class="nc" id="L239">                this._esCopion = new boolean[estudiantes.length];</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                for(int i=0; i&lt;res.length; i++){</span>
+<span class="nc" id="L241">                    this._esCopion[res[i]] = true;</span>
+                }
+<span class="nc" id="L243">                return res;</span>
+    
+            } else {
+<span class="fc" id="L246">                int E = estudiantes.length;</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">                if (E &lt;= 1) {</span>
+<span class="nc" id="L248">                    this._esCopion = new boolean[E];</span>
+<span class="nc" id="L249">                    return new int[0];</span>
+                }
+    
+<span class="fc" id="L252">                int maxRespuesta = 0;</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">                for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">                    for (int j = 0; j &lt; ExamenCanonico.length; j++) {</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">                        if (estudiantes[i].respuestas[j] &gt; maxRespuesta) {</span>
+<span class="fc" id="L256">                            maxRespuesta = estudiantes[i].respuestas[j];</span>
+                        }
+                    }
+                }
+    
+<span class="fc" id="L261">                int umbral = (E - 1 + 3) / 4;</span>
+<span class="fc" id="L262">                int R = ExamenCanonico.length;</span>
+
+<span class="fc" id="L264">                boolean[][] esRespuestaSospechosa = new boolean[E][R];</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">                for (int j = 0; j &lt; R; j++) {</span>
+<span class="fc" id="L266">                    int[] counts = new int[maxRespuesta + 1];</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">                    for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc" id="L268">                        int respuesta = estudiantes[i].respuestas[j];</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">                        if (respuesta != -1) {</span>
+<span class="fc" id="L270">                            counts[respuesta]++;</span>
+                        }
+                    }
+<span class="fc bfc" id="L273" title="All 2 branches covered.">                    for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc" id="L274">                        int respuesta = estudiantes[i].respuestas[j];</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">                        if (respuesta != -1) {</span>
+<span class="fc" id="L276">                            int count = counts[respuesta];</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">                            if ((count - 1) &gt;= umbral) {</span>
+<span class="fc" id="L278">                                esRespuestaSospechosa[i][j] = true;</span>
+                            }
+                        }
+                    }
+                }
+
+<span class="fc" id="L284">                boolean[] esCopion = new boolean[E];</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">                for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc" id="L286">                    boolean todasSospechosas = true;</span>
+<span class="fc" id="L287">                    int respuestasContestadas = 0;</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">                    for (int j = 0; j &lt; R; j++) {</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">                        if (estudiantes[i].respuestas[j] == -1) continue;</span>
+<span class="fc" id="L290">                        respuestasContestadas++;</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">                        if (!esRespuestaSospechosa[i][j]) {</span>
+<span class="fc" id="L292">                            todasSospechosas = false;</span>
+<span class="fc" id="L293">                            break;</span>
+                        }
+                    }
+<span class="fc bfc" id="L296" title="All 4 branches covered.">                    if (respuestasContestadas &gt; 0 &amp;&amp; todasSospechosas) {</span>
+<span class="fc" id="L297">                        esCopion[i] = true;</span>
+                    }
+                }
+                
+<span class="fc" id="L301">                this._esCopion = esCopion;</span>
+    
+<span class="fc" id="L303">                int countSospechosos = 0;</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">                for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">                    if (esCopion[i]) {</span>
+<span class="fc" id="L306">                        countSospechosos++;</span>
+                    }
+                }
+    
+<span class="fc" id="L310">                int[] res = new int[countSospechosos];</span>
+<span class="fc" id="L311">                int index = 0;</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">                for (int i = 0; i &lt; E; i++) {</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">                    if (esCopion[i]) {</span>
+<span class="fc" id="L314">                        res[index++] = i;</span>
+                    }
+                }
+<span class="fc" id="L317">                return res;</span>
+            }
+        }
+
+    // Complejidad: O(E*log E)
+    public NotaFinal[] corregir() { // O(E*log E)
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        if (this._esCopion == null) { // O(1)</span>
+<span class="fc" id="L324">            throw new IllegalStateException(&quot;chequearCopias must be called before corregir&quot;); // O(1)</span>
+        }
+
+<span class="fc" id="L327">        ListaEnlazada&lt;NotaFinal&gt; notas_validas = new ListaEnlazada&lt;&gt;(); // O(1)</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        for (int i = 0; i &lt; estudiantes.length; i++) { // Bucle O(E)</span>
+<span class="pc bpc" id="L329" title="1 of 4 branches missed.">            if (estudiantes[i].entregado &amp;&amp; !_esCopion[i]) { // O(1)</span>
+<span class="fc" id="L330">                notas_validas.agregarAtras(new NotaFinal(estudiantes[i].puntaje, estudiantes[i].id)); // O(1)</span>
+            }
+        }
+
+<span class="fc" id="L334">        NotaFinal[] notas_array = new NotaFinal[notas_validas.longitud()]; // O(V)</span>
+<span class="fc" id="L335">        ListaEnlazada.ListaIterador iter = notas_validas.iterador(); // O(1)</span>
+<span class="fc" id="L336">        int idx = 0; // O(1)</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">        while (iter.haySiguiente()) { // Bucle O(V)</span>
+<span class="fc" id="L338">            notas_array[idx++] = (NotaFinal) iter.siguiente(); // O(1)</span>
+        }
+
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        if (notas_array.length &gt; 0) { // O(1)</span>
+<span class="fc" id="L342">            mergeSort(notas_array, 0, notas_array.length - 1); // O(V log V)</span>
+        }
+<span class="fc" id="L344">        return notas_array; // O(1)</span>
+    }
+
+    private void mergeSort(NotaFinal[] arr, int inicio, int fin) { // O(N log N) donde N = fin - inicio
+<span class="fc bfc" id="L348" title="All 2 branches covered.">        if (inicio &lt; fin) { // O(1)</span>
+<span class="fc" id="L349">            int medio = inicio + (fin - inicio) / 2; // O(1)</span>
+            // Cada llamada recursiva tiene un costo de O(N/2 * log(N/2))
+<span class="fc" id="L351">            mergeSort(arr, inicio, medio);</span>
+<span class="fc" id="L352">            mergeSort(arr, medio + 1, fin);</span>
+            // La combinación de los resultados toma O(N)
+<span class="fc" id="L354">            merge(arr, inicio, medio, fin);</span>
+        }
+<span class="fc" id="L356">    }</span>
+
+    private void merge(NotaFinal[] arr, int inicio, int medio, int fin) { // O(N) donde N = fin - inicio
+<span class="fc" id="L359">        int n1 = medio - inicio + 1; // O(1)</span>
+<span class="fc" id="L360">        int n2 = fin - medio; // O(1)</span>
+<span class="fc" id="L361">        NotaFinal[] izq = new NotaFinal[n1]; // O(n1)</span>
+<span class="fc" id="L362">        NotaFinal[] der = new NotaFinal[n2]; // O(n2)</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        for (int i = 0; i &lt; n1; i++) izq[i] = arr[inicio + i]; // Bucle O(n1)</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        for (int j = 0; j &lt; n2; j++) der[j] = arr[medio + 1 + j]; // Bucle O(n2)</span>
+
+<span class="fc" id="L366">        int i = 0, j = 0, k = inicio; // O(1)</span>
+<span class="fc bfc" id="L367" title="All 4 branches covered.">        while (i &lt; n1 &amp;&amp; j &lt; n2) { // Bucle O(n1+n2) = O(N)</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">            if (compararNotaFinal(izq[i], der[j]) &lt;= 0) { // O(1)</span>
+<span class="fc" id="L369">                arr[k++] = izq[i++]; // O(1)</span>
+<span class="fc" id="L370">            } else {</span>
+<span class="fc" id="L371">                arr[k++] = der[j++]; // O(1)</span>
+            }
+        }
+<span class="fc bfc" id="L374" title="All 2 branches covered.">        while (i &lt; n1) arr[k++] = izq[i++]; // Bucle O(n1)</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">        while (j &lt; n2) arr[k++] = der[j++]; // Bucle O(n2)</span>
+<span class="fc" id="L376">    }</span>
+
+    private int compararNotaFinal(NotaFinal a, NotaFinal b) { // O(1)
+<span class="fc bfc" id="L379" title="All 2 branches covered.">        if (a._nota != b._nota) { // O(1)</span>
+<span class="fc" id="L380">            return Double.compare(b._nota, a._nota); // O(1)  // descendiente por nota</span>
+        }
+<span class="fc" id="L382">        return Integer.compare(b._id, a._id); // O(1)  // descendiente por ID</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

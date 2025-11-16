@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListaEnlazada.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo4</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">ListaEnlazada.java</span></div><h1>ListaEnlazada.java</h1><pre class="source lang-java linenums">package aed;
+public class ListaEnlazada&lt;T&gt; {
+    private Nodo primero;
+    private Nodo ultimo;
+
+    private class Nodo {
+        private Nodo ant;
+        private T elem;
+        private Nodo sig;
+
+<span class="fc" id="L11">        public Nodo(Nodo ant, Nodo sig, T elem){</span>
+<span class="fc" id="L12">            this.ant=ant;</span>
+<span class="fc" id="L13">            this.sig=sig;</span>
+<span class="fc" id="L14">            this.elem=elem;</span>
+<span class="fc" id="L15">        }</span>
+    }
+
+<span class="fc" id="L18">    public ListaEnlazada(){</span>
+<span class="fc" id="L19">        primero=null;</span>
+<span class="fc" id="L20">    }</span>
+
+    public int longitud() {
+<span class="fc" id="L23">        int res=0;</span>
+<span class="fc" id="L24">        Nodo nodo_a_contar=this.primero;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        while (nodo_a_contar != null){</span>
+<span class="fc" id="L26">            res+=1;</span>
+<span class="fc" id="L27">            nodo_a_contar = nodo_a_contar.sig;</span>
+        }
+<span class="fc" id="L29">        return res;</span>
+    }
+
+    public void agregarAdelante(T elem) {
+<span class="nc" id="L33">        Nodo nodo_a_poner = new Nodo(null, primero, elem);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (primero != null){primero.ant = nodo_a_poner;}</span>
+<span class="nc" id="L35">        primero = nodo_a_poner;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (ultimo == null){ultimo = nodo_a_poner;}</span>
+<span class="nc" id="L37">    }</span>
+
+    public void agregarAtras(T elem) {
+<span class="fc" id="L40">        Nodo nodo_a_poner = new Nodo(ultimo, null, elem);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (ultimo!=null){ultimo.sig=nodo_a_poner;}</span>
+<span class="fc" id="L42">        ultimo=nodo_a_poner;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (primero == null){primero = nodo_a_poner;};</span>
+<span class="fc" id="L44">    }</span>
+
+    public T obtener(int i) {
+<span class="fc" id="L47">        Nodo res = primero;</span>
+<span class="fc" id="L48">        int j=0;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        while(j!=i)</span>
+<span class="fc" id="L50">            {res=res.sig;</span>
+<span class="fc" id="L51">            j+=1;}</span>
+<span class="fc" id="L52">        return res.elem;</span>
+    }
+
+    public void eliminar(int i) {
+<span class="nc" id="L56">        Nodo res = primero;</span>
+<span class="nc" id="L57">        int j=0;</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if(i==0){</span>
+<span class="nc" id="L59">            primero=primero.sig;</span>
+<span class="nc" id="L60">            return;}</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        while(j!=i)</span>
+<span class="nc" id="L62">            {res=res.sig;</span>
+<span class="nc" id="L63">            j+=1;}</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (i!=longitud()-1){</span>
+<span class="nc" id="L65">            res.sig.ant=res.ant;</span>
+<span class="nc" id="L66">            res.ant.sig=res.sig;}</span>
+<span class="nc" id="L67">        else{res.ant.sig=null;}</span>
+<span class="nc" id="L68">        res= null;</span>
+<span class="nc" id="L69">    }</span>
+
+    public void modificarPosicion(int indice, T elem) {
+<span class="nc" id="L72">        Nodo res = this.primero;</span>
+<span class="nc" id="L73">        int j=0;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        while(j!=indice)</span>
+<span class="nc" id="L75">            {res=res.sig;</span>
+<span class="nc" id="L76">            j+=1;}</span>
+<span class="nc" id="L77">        res.elem=elem;</span>
+<span class="nc" id="L78">    }</span>
+
+<span class="nc" id="L80">    public ListaEnlazada(ListaEnlazada&lt;T&gt; lista) {</span>
+<span class="nc" id="L81">        Nodo nodo_a_copiar = lista.primero;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        while(nodo_a_copiar != null)</span>
+<span class="nc" id="L83">            { agregarAtras(nodo_a_copiar.elem);</span>
+<span class="nc" id="L84">            nodo_a_copiar = nodo_a_copiar.sig;</span>
+            }
+<span class="nc" id="L86">    }</span>
+    
+    @Override
+    public String toString() {
+<span class="nc" id="L90">        String lista=&quot;&quot;;</span>
+<span class="nc" id="L91">        lista+=(&quot;[&quot;);</span>
+<span class="nc" id="L92">        Nodo minodo = primero;</span>
+<span class="nc" id="L93">        int len = longitud();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (len == 0) {</span>
+<span class="nc" id="L95">            lista+=(&quot;]&quot;);</span>
+<span class="nc" id="L96">            return lista;</span>
+        }
+<span class="nc" id="L98">        int i = 0;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        while (i != len-1){</span>
+<span class="nc" id="L100">            lista+=(minodo.elem.toString() + &quot;, &quot;);</span>
+<span class="nc" id="L101">            minodo= minodo.sig;</span>
+<span class="nc" id="L102">            i+=1;</span>
+        }
+<span class="nc" id="L104">        lista+=(minodo.elem.toString()+&quot;]&quot;);</span>
+<span class="nc" id="L105">        return lista;</span>
+    }
+
+<span class="fc" id="L108">    public class ListaIterador{</span>
+<span class="fc" id="L109">    	int indice = 0;</span>
+
+        public boolean haySiguiente() {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">	        return (indice != longitud());</span>
+        }
+        
+        public boolean hayAnterior() {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">	        return (indice &gt; 0 );</span>
+        }
+
+        public T siguiente() {
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (haySiguiente()){</span>
+            int i;
+<span class="fc" id="L122">            i = indice;</span>
+<span class="fc" id="L123">            indice  = indice + 1;</span>
+<span class="fc" id="L124">            return obtener(i);</span>
+        }
+<span class="nc" id="L126">        else {return null;}</span>
+        }
+        
+
+        public T anterior() {
+<span class="nc bnc" id="L131" title="All 2 branches missed.">	    if (hayAnterior()){</span>
+            int i;
+<span class="nc" id="L133">            i = indice -1;</span>
+<span class="nc" id="L134">            indice  = indice - 1;</span>
+<span class="nc" id="L135">            return obtener(i);</span>
+        }
+<span class="nc" id="L137">        else {return null;}</span>
+        }
+    }
+
+    public ListaIterador iterador() {
+<span class="fc" id="L142">	    return new ListaIterador();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

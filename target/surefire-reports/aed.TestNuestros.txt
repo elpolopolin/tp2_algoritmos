@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: aed.EdrTests
+Test set: aed.TestNuestros
 -------------------------------------------------------------------------------
-Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.144 s - in aed.EdrTests
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 s - in aed.TestNuestros
