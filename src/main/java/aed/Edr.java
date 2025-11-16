@@ -13,6 +13,7 @@ public class Edr {
         double puntaje; // O(1)
         boolean entregado; // O(1)
         int respuestasCorrectas; // O(1)
+        boolean esCopion; // O(1)
         Handle<Estudiante> heap_handle; // O(1)
 
         Estudiante(int id, int R) { // O(R)
@@ -24,6 +25,7 @@ public class Edr {
             this.puntaje = 0.0; // O(1)
             this.entregado = false; // O(1)
             this.respuestasCorrectas = 0; // O(1)
+            this.esCopion = false; // O(1)
             this.heap_handle = null; // O(1)
         }
 
@@ -70,6 +72,7 @@ public class Edr {
     public void resolver(int estudiante, int NroEjercicio, int res) { // O(log E)
         Estudiante est = estudiantes[estudiante]; // O(1)
         int respuesta_previa = est.respuestas[NroEjercicio]; // O(1)
+        est.respuestas[NroEjercicio] = res;
 
         boolean eraCorrecta = (respuesta_previa != -1 && respuesta_previa == ExamenCanonico[NroEjercicio]); // O(1)
         boolean esCorrecta = (res != -1 && res == ExamenCanonico[NroEjercicio]); // O(1)
@@ -80,8 +83,7 @@ public class Edr {
             est.respuestasCorrectas++; // O(1)
         }
 
-        est.respuestas[NroEjercicio] = res; // O(1)
-        double nuevo_puntaje = (int) (((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0); // O(1)
+        double nuevo_puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)
 
         if (nuevo_puntaje != est.puntaje) { // O(1)
             est.puntaje = nuevo_puntaje; // O(1)
@@ -95,32 +97,28 @@ public class Edr {
     public void copiarse(int estudiante_id) { // O(R + log E)
         Estudiante est = estudiantes[estudiante_id]; // O(1)
         
-        // 1. Identificar vecinos adyacentes
-        int[] vecinos_ids = new int[4]; // O(1)
+        // 1. Identificar estudiantes cercanos
+        int[] vecinos_ids = new int[3]; // O(1)
         int num_vecinos = 0; // O(1)
 
-        // Izquierda
-        if (estudiante_id % LadoAula != 0) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id - 1; // O(1)
+        // Izquierda de por medio: [estudianteCercano, vacio, mi estudiante]
+        if (estudiante_id % LadoAula >= 2) { // O(1)
+            vecinos_ids[num_vecinos++] = estudiante_id - 2; // O(1)
         }
-        // Derecha
-        if ((estudiante_id + 1) % LadoAula != 0 && (estudiante_id + 1) < estudiantes.length) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id + 1; // O(1)
+        // Derecha de por medio: [mi estudiante, vacio, estudianteCercano]
+        if (estudiante_id % LadoAula < LadoAula - 2 && (estudiante_id + 2) < estudiantes.length) { // O(1)
+            vecinos_ids[num_vecinos++] = estudiante_id + 2; // O(1)
         }
-        // Arriba
+        // Arriba (inmediatamente arriba)
         if (estudiante_id >= LadoAula) { // O(1)
             vecinos_ids[num_vecinos++] = estudiante_id - LadoAula; // O(1)
-        }
-        // Abajo
-        if (estudiante_id + LadoAula < estudiantes.length) { // O(1)
-            vecinos_ids[num_vecinos++] = estudiante_id + LadoAula; // O(1)
         }
 
         int mejor_vecino_id = -1; // O(1)
         int max_respuestas_nuevas = -1; // O(1)
 
-        // 2. Encontrar el mejor vecino (4 iteraciones max)
-        for (int i = 0; i < num_vecinos; i++) { // Bucle O(1) (max 4 veces)
+        // 2. Encontrar el mejor vecino (3 iteraciones max)
+        for (int i = 0; i < num_vecinos; i++) { // Bucle O(1) (max 3 veces)
             int vecino_id = vecinos_ids[i]; // O(1)
             Estudiante potencial_vecino = estudiantes[vecino_id]; // O(1)
             
@@ -143,6 +141,8 @@ public class Edr {
 
         if (mejor_vecino_id == -1 || max_respuestas_nuevas == 0) return; // O(1)
 
+        est.esCopion = true;
+
         // 3. Copiar la primera respuesta y recalcular puntaje
         Estudiante vecino = estudiantes[mejor_vecino_id]; // O(1)
         for (int j = 0; j < ExamenCanonico.length; j++) { // Bucle O(R)
@@ -157,7 +157,7 @@ public class Edr {
                 }
 
                 est.respuestas[j] = respuesta_a_copiar; // O(1)
-                double nuevo_puntaje = (int) (((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0); // O(1)
+                double nuevo_puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)
 
                 if (nuevo_puntaje != est.puntaje) { // O(1)
                     est.puntaje = nuevo_puntaje; // O(1)
@@ -202,86 +202,124 @@ public class Edr {
                     est.respuestasCorrectas++; // O(1)
                 }
             }
-            est.puntaje = (int) (((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0); // O(1)
+            est.puntaje = ((double) est.respuestasCorrectas / ExamenCanonico.length) * 100.0; // O(1)
             est.heap_handle = puntajesDeEstudiantes.insertar(est); // O(log E)
         }
     }
 
     // Complejidad: O(E*R) asumiendo que el valor de las respuestas es acotado.
-    public int[] chequearCopias() {
-        int E = estudiantes.length;
-        if (E <= 1) {
-            this._esCopion = new boolean[E];
-            return new int[0];
-        }
-
-        int maxRespuesta = 0;
-        for (int i = 0; i < E; i++) {
-            for (int j = 0; j < ExamenCanonico.length; j++) {
-                if (estudiantes[i].respuestas[j] > maxRespuesta) {
-                    maxRespuesta = estudiantes[i].respuestas[j];
-                }
-            }
-        }
-
-        int umbral = (E - 1 + 3) / 4;
-        int R = ExamenCanonico.length;
-
-        boolean[][] esRespuestaSospechosa = new boolean[E][R];
-        for (int j = 0; j < R; j++) {
-            int[] counts = new int[maxRespuesta + 1];
-            for (int i = 0; i < E; i++) {
-                int respuesta = estudiantes[i].respuestas[j];
-                if (respuesta != -1) {
-                    counts[respuesta]++;
-                }
-            }
-            for (int i = 0; i < E; i++) {
-                int respuesta = estudiantes[i].respuestas[j];
-                if (respuesta != -1) {
-                    int count = counts[respuesta];
-                    if ((count - 1) >= umbral) {
-                        esRespuestaSospechosa[i][j] = true;
-                    }
-                }
-            }
-        }
-
-        boolean[] esCopion = new boolean[E];
-        for (int i = 0; i < E; i++) {
-            boolean todasSospechosas = true;
-            int respuestasContestadas = 0;
-            for (int j = 0; j < R; j++) {
-                if (estudiantes[i].respuestas[j] == -1) continue;
-                respuestasContestadas++;
-                if (!esRespuestaSospechosa[i][j]) {
-                    todasSospechosas = false;
+        public int[] chequearCopias() {
+            boolean alguienSeCopio = false;
+            for (int i = 0; i < estudiantes.length; i++) {
+                if (estudiantes[i].esCopion) {
+                    alguienSeCopio = true;
                     break;
                 }
             }
-            if (respuestasContestadas > 0 && todasSospechosas) {
-                esCopion[i] = true;
-            }
-        }
-        
-        this._esCopion = esCopion;
+    
+            if (alguienSeCopio) {
+                int count = 0;
+                for (int i = 0; i < estudiantes.length; i++) {
+                    if (estudiantes[i].esCopion) {
+                        count++;
+                    }
+                }
+                int[] res = new int[count];
+                int index = 0;
+                for (int i = 0; i < estudiantes.length; i++) {
+                    if (estudiantes[i].esCopion) {
+                        res[index++] = i;
+                    }
+                }
+                this._esCopion = new boolean[estudiantes.length];
+                for(int i=0; i<res.length; i++){
+                    this._esCopion[res[i]] = true;
+                }
+                return res;
+    
+            } else {
+                // Modo Estadístico
+                int E = estudiantes.length;
+                if (E <= 1) {
+                    this._esCopion = new boolean[E];
+                    return new int[0];
+                }
+    
+                int maxRespuesta = 0;
+                for (int i = 0; i < E; i++) {
+                    for (int j = 0; j < ExamenCanonico.length; j++) {
+                        if (estudiantes[i].respuestas[j] > maxRespuesta) {
+                            maxRespuesta = estudiantes[i].respuestas[j];
+                        }
+                    }
+                }
+    
+                int umbral = (E - 1 + 3) / 4;
+                int R = ExamenCanonico.length;
+    
+                System.out.println("E: " + E);
+                System.out.println("umbral: " + umbral);
+                System.out.println("maxRespuesta: " + maxRespuesta);
 
-        int countSospechosos = 0;
-        for (int i = 0; i < E; i++) {
-            if (esCopion[i]) {
-                countSospechosos++;
+                boolean[][] esRespuestaSospechosa = new boolean[E][R];
+                for (int j = 0; j < R; j++) {
+                    int[] counts = new int[maxRespuesta + 1];
+                    for (int i = 0; i < E; i++) {
+                        int respuesta = estudiantes[i].respuestas[j];
+                        if (respuesta != -1) {
+                            counts[respuesta]++;
+                        }
+                    }
+                    System.out.println("Pregunta " + j + ", counts: " + Arrays.toString(counts));
+                    for (int i = 0; i < E; i++) {
+                        int respuesta = estudiantes[i].respuestas[j];
+                        if (respuesta != -1) {
+                            int count = counts[respuesta];
+                            if ((count - 1) >= umbral) {
+                                esRespuestaSospechosa[i][j] = true;
+                            }
+                        }
+                    }
+                }
+    
+                System.out.println("esRespuestaSospechosa: " + Arrays.deepToString(esRespuestaSospechosa));
+    
+                boolean[] esCopion = new boolean[E];
+                for (int i = 0; i < E; i++) {
+                    boolean todasSospechosas = true;
+                    int respuestasContestadas = 0;
+                    for (int j = 0; j < R; j++) {
+                        if (estudiantes[i].respuestas[j] == -1) continue;
+                        respuestasContestadas++;
+                        if (!esRespuestaSospechosa[i][j]) {
+                            todasSospechosas = false;
+                            break;
+                        }
+                    }
+                    if (respuestasContestadas > 0 && todasSospechosas) {
+                        esCopion[i] = true;
+                    }
+                }
+                
+                this._esCopion = esCopion;
+    
+                int countSospechosos = 0;
+                for (int i = 0; i < E; i++) {
+                    if (esCopion[i]) {
+                        countSospechosos++;
+                    }
+                }
+    
+                int[] res = new int[countSospechosos];
+                int index = 0;
+                for (int i = 0; i < E; i++) {
+                    if (esCopion[i]) {
+                        res[index++] = i;
+                    }
+                }
+                return res;
             }
         }
-
-        int[] res = new int[countSospechosos];
-        int index = 0;
-        for (int i = 0; i < E; i++) {
-            if (esCopion[i]) {
-                res[index++] = i;
-            }
-        }
-        return res;
-    }
 
     // Complejidad: O(E*log E)
     public NotaFinal[] corregir() { // O(E*log E)
