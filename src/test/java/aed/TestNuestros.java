@@ -21,22 +21,21 @@ public class TestNuestros {
 
         edr = new Edr(d_aula, cant_alumnos, solucion);
     }
-
-    // crea un edr mas chico
+    // creaun edr mas chico
     @Test
     void nuevo_edr_chico() {
         int[] solucion_chica = new int[]{0,1,2,3,4};
         Edr edr_chico = new Edr(3, 3, solucion_chica);
-        double[] notas = edr_chico.notas();
+        double[] notas =edr_chico.notas();
         double[] notas_esperadas = new double[]{0.0, 0.0, 0.0};
         assertTrue(Arrays.equals(notas_esperadas, notas));
     }
-
-    // cambiar la misma respuesta varias veces actualiza bien la nota
+    //cambiar la misma respuesta varias veces actualiza bien la nota
     @Test
     void resolver_cambia_respuesta() {
         double[] notas;
         double[] notas_esperadas;
+
         edr.resolver(0,0,5);
         notas = edr.notas();
         notas_esperadas = new double[]{0.0, 0.0, 0.0, 0.0};
@@ -56,7 +55,7 @@ public class TestNuestros {
     void resolver_muchos_ejercicios_mismo_estudiante() {
         edr.resolver(1, 0, 0);
         edr.resolver(1, 1, 1);
-        edr.resolver(1, 2, 2);
+        edr.resolver(1, 2,2);
         double[] notas = edr.notas();
         double[] notas_esperadas = new double[]{0.0, 30.0, 0.0, 0.0};
         assertTrue(Arrays.equals(notas_esperadas, notas));
@@ -74,6 +73,7 @@ public class TestNuestros {
         }
         double[] notas = edr.notas();
         double[] notas_esperadas = new double[]{0.0, 0.0, 0.0, 0.0};
+
         assertTrue(Arrays.equals(notas_esperadas, notas));
     }
 
@@ -115,12 +115,13 @@ public class TestNuestros {
         edr_copia.resolver(3, 2, 2);
         edr_copia.resolver(3, 3, 3);
         edr_copia.copiarse(2);
+
         double[] notas = edr_copia.notas();
         double[] notas_esperadas = new double[]{50.0, 0.0, 25.0, 50.0};
         assertTrue(Arrays.equals(notas_esperadas, notas));
     }
 
-    // entregar dos veces al mismo alumno no rompe y no cambia su nota
+    //entregarr dos veces al mismo alumno no rompe y no cambia su nota
     @Test
     void entregar_dos_veces_no_rompe() {
         edr.resolver(0, 0, 0);
@@ -128,7 +129,7 @@ public class TestNuestros {
         double[] notas_esperadas = new double[]{10.0, 0.0, 0.0, 0.0};
         assertTrue(Arrays.equals(notas_esperadas, notas));
         edr.entregar(0);
-        edr.entregar(0);
+        edr.entregar(0); 
         edr.consultarDarkWeb(1, solucion);
         notas = edr.notas();
         assertEquals(10.0, notas[0]);
@@ -143,7 +144,8 @@ public class TestNuestros {
         edr_tres.resolver(1, 1, 1);
         edr_tres.resolver(2, 2, 2);
         double[] notas_antes = edr_tres.notas();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) 
+        {
             edr_tres.entregar(i);
         }
         edr_tres.consultarDarkWeb(2, examen);

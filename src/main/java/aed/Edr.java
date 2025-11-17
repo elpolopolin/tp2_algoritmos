@@ -13,8 +13,7 @@ public class Edr {
         int respuestasCorrectas; // O(1)
         boolean esCopion; // O(1)
         Handle<Estudiante> heap_handle; // O(1)
-
-        Estudiante(int id, int R) { // O(R)
+        Estudiante(int id, int R) { //O(R)
             this.id = id; // O(1)
             this.respuestas = new int[R]; // O(R)
             for (int i = 0; i < R; i++) { // Bucle O(R)
@@ -24,17 +23,17 @@ public class Edr {
             this.entregado = false; // O(1)
             this.respuestasCorrectas = 0; // O(1)
             this.esCopion = false; // O(1)
-            this.heap_handle = null; // O(1)
+            this.heap_handle =  null; //O(1)
         }
-
         @Override
-        public int compareTo(Estudiante otro) { // O(1)
-            if (this.puntaje != otro.puntaje) { // O(1)
-                return Integer.compare(this.puntaje, otro.puntaje); // O(1)
+        public int compareTo(Estudiante otro) { //O(1)
+            if (this.puntaje != otro.puntaje) { //O(1)
+                return Integer.compare(this.puntaje, otro.puntaje); //O(1)
             }
-            return Integer.compare(this.id, otro.id); // O(1)
+            return Integer.compare(this.id, otro.id); //O(1)
         }
     }
+
 
     private Estudiante[] estudiantes; // O(1)
     private Heap<Estudiante> puntajesDeEstudiantes; // O(1)
@@ -42,10 +41,11 @@ public class Edr {
     private int LadoAula; // O(1)
     private boolean[] _esCopion = null; // O(1)
 
-    // Complejidad: O(E*R)
-    public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) { // O(E*R)
+    // Complejidad: O(E*R) 
+    public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) { // O(E*R)     
         this.LadoAula = LadoAula; // O(1)
         this.ExamenCanonico = new int[ExamenCanonico.length]; // O(R)
+
         for (int i = 0; i < ExamenCanonico.length; i++) { // Bucle O(R)
             this.ExamenCanonico[i] = ExamenCanonico[i]; // O(1)
         }
@@ -57,27 +57,29 @@ public class Edr {
             est.heap_handle = puntajesDeEstudiantes.insertar(est); // O(log E)
             estudiantes[i] = est; // O(1)
         }
+    
     }
-
     // Complejidad: O(E)
     public double[] notas() { // O(E)
         double[] res = new double[estudiantes.length]; // O(E)
         for (int i = 0; i < estudiantes.length; i++) { // Bucle O(E)
             res[i] = estudiantes[i].puntaje; // O(1)
         }
+
         return res; // O(1)
     }
 
     // Complejidad: O(log E)
     public void resolver(int estudiante, int NroEjercicio, int res) { // O(log E)
-        Estudiante est = estudiantes[estudiante]; // O(1)
+        Estudiante est = estudiantes[estudiante] ; // O(1)
         int respuesta_previa = est.respuestas[NroEjercicio]; // O(1)
         est.respuestas[NroEjercicio] = res;
 
         boolean eraCorrecta = (respuesta_previa != -1 && respuesta_previa == ExamenCanonico[NroEjercicio]); // O(1)
         boolean esCorrecta = (res != -1 && res == ExamenCanonico[NroEjercicio]); // O(1)
 
-        if (eraCorrecta && !esCorrecta) { // O(1)
+        if (eraCorrecta && !esCorrecta)   // O(1)
+        {
             est.respuestasCorrectas--; // O(1)
         } else if (!eraCorrecta && esCorrecta) { // O(1)
             est.respuestasCorrectas++; // O(1)
@@ -101,21 +103,21 @@ public class Edr {
 
         // calcular C = estudiantes por fila (si LadoAula par -> LadoAula/2, si impar -> (LadoAula+1)/2)
         int C;
-        if (LadoAula % 2 == 0) {
+        if (LadoAula % 2 == 0){
                 C = LadoAula / 2; // O(1)
-        } else {
+        }else{
             C = (LadoAula + 1) / 2; // O(1)
         }
 
-        // Izquierda: id-1 (existe si posición en fila > 0)
+        //izquierda: id-1 (existe si posición en fila > 0)
             if (estudiante_id > 0 && (estudiante_id / C) == ((estudiante_id - 1) / C)) {
                 vecinos_ids[num_vecinos++] = estudiante_id - 1;
             }
-        // Derecha: id+1 (existe si posición en fila < C-1 y dentro de total estudiantes)
+        //derecha id+1 (existe si posición en fila < C-1 y dentro de total estudiantes)
             if ((estudiante_id + 1) < estudiantes.length && (estudiante_id / C) == ((estudiante_id + 1) / C)) {
                 vecinos_ids[num_vecinos++] = estudiante_id + 1;
             }
-        // Adelante (arriba): id - C (existe si estamos en fila > 0, es decir id >= C)
+        //adelante id - C (existe si estamos en fila > 0, es decir id >= C)
         if (estudiante_id >= C) {
             int adelante = estudiante_id - C;
             if (adelante >= 0 && adelante < estudiantes.length) {
@@ -137,7 +139,6 @@ public class Edr {
                     respuestas_nuevas++; // O(1)
                 }
             }
-
             if (respuestas_nuevas > max_respuestas_nuevas) { // O(1)
                 max_respuestas_nuevas = respuestas_nuevas; // O(1)
                 mejor_vecino_id = vecino_id; // O(1)
@@ -220,7 +221,7 @@ public class Edr {
                     break; // O(1)
                 }
             }
-    
+
             if (alguienSeCopio) { // O(1)
                 int count = 0; // O(1)
                 for (int i = 0; i < estudiantes.length; i++) { // Bucle O(E)
